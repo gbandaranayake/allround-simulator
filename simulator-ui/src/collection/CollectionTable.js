@@ -17,7 +17,6 @@ class CollectionTable extends React.Component {
 
     fetchCollections = () => {
         try {
-            console.log('loading');
             let url = 'http://127.0.0.1:8080/collections/all';
             fetch(url).then(response => {
                 let collections = response.json();

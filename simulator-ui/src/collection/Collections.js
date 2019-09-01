@@ -4,27 +4,20 @@ import Container from "react-bootstrap/Container";
 import CollectionTable from "./CollectionTable";
 import CollectionInfoInput from "./CollectionInfoInput";
 
-class Collections extends React.Component{
-    constructor(props) {
-        super(props);
-
-    }
-
-    render() {
-        return (
-            <Container>
-                <div className="mt-4">
-                    <Jumbotron>
-                        <h3>Collections Management</h3>
-                        <CollectionInfoInput/>
-                    </Jumbotron>
-                    <Jumbotron>
-                        <CollectionTable/>
-                    </Jumbotron>
-                </div>
-            </Container>
-        )
-    }
+function Collections() {
+    return (
+        <Container>
+            <div className="mt-4">
+                <Jumbotron>
+                    <h3>Collections Management</h3>
+                    <CollectionInfoInput/>
+                </Jumbotron>
+                <Jumbotron>
+                    <CollectionTable/>
+                </Jumbotron>
+            </div>
+        </Container>
+    )
 }
 
 export default Collections;
