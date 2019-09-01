@@ -2,7 +2,7 @@ import React from "react"
 import {Jumbotron} from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import CollectionTable from "./CollectionTable";
-import CollectionInfoInput from "./CollectionInfoInput";
+import CollectionInfoInput from "./CreateCollectionForm";
 
 function Collections() {
     return (
