@@ -18,7 +18,7 @@ class ClientParameters extends React.Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text id="host-addon">Host</InputGroup.Text>
                             </InputGroup.Prepend>
-                            <FormControl placeholder="localhost" aria-label="Host" aria-describedby="host-addon" size="sm"/>
+                            <FormControl placeholder="localhost" aria-label="Host" aria-describedby="host-addon"/>
                         </InputGroup>
                     </Form.Group>
                     <Form.Group controlId="port">
@@ -26,7 +26,7 @@ class ClientParameters extends React.Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text id="port-addon">Port</InputGroup.Text>
                             </InputGroup.Prepend>
-                            <FormControl placeholder="enter port number here" aria-label="Port" aria-describedby="port-addon" size="sm"/>
+                            <FormControl placeholder="enter port number here" aria-label="Port" aria-describedby="port-addon"/>
                         </InputGroup>
                     </Form.Group>
                     <Button variant="primary" type="submit">
