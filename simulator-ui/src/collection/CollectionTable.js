@@ -6,6 +6,7 @@ import Fade from "react-bootstrap/Fade";
 import Button from "react-bootstrap/Button";
 import {FaTrashAlt} from "react-icons/fa";
 import Tooltip from "react-bootstrap/Tooltip";
+import URLPaths from "../common/URLPaths";
 
 class CollectionTable extends React.Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class CollectionTable extends React.Component {
 
     fetchCollections = () => {
         try {
-            let url = 'http://127.0.0.1:8080/collections/all';
+            let url = URLPaths.collections.fetch;
             fetch(url).then(response => {
                 let collections = response.json();
                 this.setState({

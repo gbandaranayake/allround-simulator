@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
+import URLPaths from "../common/URLPaths";
 
 class CreateCollectionForm extends React.Component{
     constructor(props) {
@@ -17,7 +18,7 @@ class CreateCollectionForm extends React.Component{
 
     handleSubmit(event) {
         event.preventDefault();
-        fetch("http://127.0.0.1:8080/collections/create", {
+        fetch(URLPaths.collections.create, {
             method: "POST",
             body: JSON.stringify({name : this.state.collectionName, description : this.state.description}),
             headers: {
