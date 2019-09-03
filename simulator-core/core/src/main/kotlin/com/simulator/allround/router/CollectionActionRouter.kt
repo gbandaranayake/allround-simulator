@@ -9,18 +9,13 @@ import org.springframework.web.reactive.function.server.*
 open class CollectionActionRouter() {
     @Bean
     open fun routeCreateCollection(actionHandler: CollectionActionHandler): RouterFunction<ServerResponse> {
-        return RouterFunctions
-                .route(
-                        RequestPredicates.POST("/collections/create"), HandlerFunction {
-                    actionHandler.create(it.bodyToMono())
-                })
+        return RouterFunctions.route(RequestPredicates.POST("/collections/create"), HandlerFunction {
+            actionHandler.create(it.bodyToMono())
+        })
     }
 
     @Bean
     open fun routeGetAllCollections(actionHandler: CollectionActionHandler): RouterFunction<ServerResponse> {
-        return RouterFunctions
-                .route(
-                        RequestPredicates.GET("/collections/all"), HandlerFunction { actionHandler.getAll() }
-                )
+        return RouterFunctions.route(RequestPredicates.GET("/collections/all"), HandlerFunction { actionHandler.getAll() })
     }
 }

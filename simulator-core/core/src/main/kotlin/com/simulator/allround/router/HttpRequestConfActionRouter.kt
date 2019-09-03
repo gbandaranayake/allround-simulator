@@ -12,9 +12,7 @@ open class HttpRequestConfActionRouter(){
 
     @Bean
     open fun route(actionHandler: HttpRequestConfActionHandler): RouterFunction<ServerResponse> {
-        return RouterFunctions
-            .route(
-                RequestPredicates.POST("/create/http/request"), HandlerFunction {
+        return RouterFunctions.route(RequestPredicates.POST("/create/http/request"), HandlerFunction {
                         actionHandler.create(it.bodyToMono())
                 })
     }
