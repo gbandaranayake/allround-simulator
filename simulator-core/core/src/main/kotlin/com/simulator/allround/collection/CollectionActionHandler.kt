@@ -2,6 +2,7 @@ package com.simulator.allround.collection
 
 import com.simulator.allround.repository.CollectionMongoRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -28,4 +29,4 @@ class CollectionActionHandler(@Autowired private val collectionRepository: Colle
 }
 
 @Document("collection-docs")
-data class Collection(val name: String, val description: String)
+data class Collection(@Id val id: String, val name: String, val description: String)

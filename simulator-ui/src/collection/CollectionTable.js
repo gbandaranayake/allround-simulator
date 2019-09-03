@@ -64,9 +64,6 @@ class CollectionTable extends React.Component {
         const tableRowElements = this.state.rows.map((collection) =>
             <tr key={collection.id}>
                 <Fade in={true} appear={true} timeout={5000} duration={5000}>
-                    <td>{collection.id}</td>
-                </Fade>
-                <Fade in={true} appear={true} timeout={5000} duration={5000}>
                     <td>{collection.name}</td>
                 </Fade>
                 <Fade in={true} appear={true} timeout={5000} duration={5000}>
@@ -106,7 +103,6 @@ class CollectionTable extends React.Component {
                 <Table bordered hover variant="dark" size="sm">
                     <thead>
                     <tr>
-                        <th className="font-weight-normal">ID</th>
                         <th className="font-weight-normal">Name</th>
                         <th className="font-weight-normal">Description</th>
                         <th className="font-weight-normal text-center">Actions</th>
