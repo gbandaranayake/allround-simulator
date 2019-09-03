@@ -20,6 +20,7 @@ class CreateCollectionForm extends React.Component{
         event.preventDefault();
         fetch(URLPaths.collections.create, {
             method: "POST",
+            mode: "cors",
             body: JSON.stringify({name : this.state.collectionName, description : this.state.description}),
             headers: {
                 "Content-Type": "application/json"

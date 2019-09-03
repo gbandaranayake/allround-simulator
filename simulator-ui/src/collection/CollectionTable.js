@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import {FaTrashAlt} from "react-icons/fa";
 import Tooltip from "react-bootstrap/Tooltip";
 import URLPaths from "../common/URLPaths";
+import {Jumbotron} from "react-bootstrap";
 
 class CollectionTable extends React.Component {
     constructor(props) {
@@ -20,9 +21,10 @@ class CollectionTable extends React.Component {
         try {
             let url = URLPaths.collections.fetch;
             fetch(url).then(response => {
-                let collections = response.json();
-                this.setState({
-                    rows: collections
+                response.json().then(collections => {
+                    this.setState({
+                        rows: collections
+                    });
                 });
             }, error => {
                 console.log('failed to fetch the collections list ' + this);
@@ -93,26 +95,28 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" style={{'backgroundColor': 'transparent', 'border': 'none'}}
-                                onClick={() => this.deleteRow(collection.id)} ><FaTrashAlt/></Button>
+                                onClick={() => this.deleteRow(collection.id)}><FaTrashAlt/></Button>
                     </OverlayTrigger>
                 </td>
             </tr>
         );
 
         return (
-            <Table bordered hover variant="dark" size="sm">
-                <thead>
-                <tr>
-                    <th className="font-weight-normal">ID</th>
-                    <th className="font-weight-normal">Name</th>
-                    <th className="font-weight-normal">Description</th>
-                    <th className="font-weight-normal text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {tableRowElements}
-                </tbody>
-            </Table>
+            <Jumbotron>
+                <Table bordered hover variant="dark" size="sm">
+                    <thead>
+                    <tr>
+                        <th className="font-weight-normal">ID</th>
+                        <th className="font-weight-normal">Name</th>
+                        <th className="font-weight-normal">Description</th>
+                        <th className="font-weight-normal text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {tableRowElements}
+                    </tbody>
+                </Table>
+            </Jumbotron>
         )
     }
 }
