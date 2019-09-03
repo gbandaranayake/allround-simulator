@@ -6,35 +6,27 @@ import Fade from "react-bootstrap/Fade";
 import Button from "react-bootstrap/Button";
 import {FaTrashAlt} from "react-icons/fa";
 import Tooltip from "react-bootstrap/Tooltip";
-import URLPaths from "../common/URLPaths";
 import {Jumbotron} from "react-bootstrap";
+import URLPaths from "../common/URLPaths";
+import {fireDelete, get} from "../common/HttpFetchConnector";
 
 class CollectionTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {rows: []};
         this.fetchCollections = this.fetchCollections.bind(this);
-        this.deleteRow = this.deleteRow.bind(this);
+        this.deleteCollection = this.deleteCollection.bind(this);
     }
 
     fetchCollections = () => {
         try {
             let url = URLPaths.collections.fetch;
-            fetch(url).then(response => {
-                response.json().then(collections => {
-                    this.setState({
-                        rows: collections
-                    });
+            get(url).then(collections => {
+                this.setState({
+                    rows: collections
                 });
             }, error => {
                 console.log('failed to fetch the collections list ' + this);
-                this.setState({
-                    rows: [{
-                        id: 0,
-                        name: 'This is the collection name',
-                        description: 'This is the collection description'
-                    }]
-                });
             });
         } catch (e) {
             console.log('failed to fetch the collections list');
@@ -53,8 +45,12 @@ class CollectionTable extends React.Component {
         clearInterval(this.timerId);
     }
 
-    deleteRow(rowId) {
-        this.setState({rows: this.state.rows.filter(r => r.id !== rowId)})
+    deleteCollection(rowId) {
+        fireDelete(URLPaths.collections.delete, {
+            id: rowId
+        }).then(res => {
+            this.setState({rows: this.state.rows.filter(r => r.id !== rowId)})
+        });
     }
 
     render() {
@@ -92,7 +88,7 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" style={{'backgroundColor': 'transparent', 'border': 'none'}}
-                                onClick={() => this.deleteRow(collection.id)}><FaTrashAlt/></Button>
+                                onClick={() => this.deleteCollection(collection.id)}><FaTrashAlt/></Button>
                     </OverlayTrigger>
                 </td>
             </tr>

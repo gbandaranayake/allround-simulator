@@ -4,33 +4,30 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import URLPaths from "../common/URLPaths";
+import {post} from "../common/HttpFetchConnector";
 
-class CreateCollectionForm extends React.Component{
+class CreateCollectionForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {collectionName : '', description : ''}
+        this.state = {collectionName: '', description: ''}
     }
 
     handleChange(event) {
         let stateKey = event.nativeEvent.target.id;
-        this.setState({ [stateKey] : event.nativeEvent.target.value || ''})
+        this.setState({[stateKey]: event.nativeEvent.target.value || ''})
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        fetch(URLPaths.collections.create, {
-            method: "POST",
-            mode: "cors",
-            body: JSON.stringify({name : this.state.collectionName, description : this.state.description}),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(function(response) {
+        post(URLPaths.collections.create, {
+            name: this.state.collectionName,
+            description: this.state.description
+        }).then(function (response) {
             console.log(response);
-        }, function(error) {
+        }, function (error) {
             console.log(error);
         });
-        this.setState({collectionName : '', description : ''});
+        this.setState({collectionName: '', description: ''});
     }
 
     render() {
@@ -41,7 +38,8 @@ class CreateCollectionForm extends React.Component{
                         <InputGroup.Prepend>
                             <InputGroup.Text>Name</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <FormControl placeholder="name" aria-label="Name" value={this.state.collectionName} onChange={this.handleChange.bind(this)}/>
+                        <FormControl placeholder="name" aria-label="Name" value={this.state.collectionName}
+                                     onChange={this.handleChange.bind(this)}/>
                     </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="description">
@@ -49,7 +47,8 @@ class CreateCollectionForm extends React.Component{
                         <InputGroup.Prepend>
                             <InputGroup.Text>Description</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <FormControl placeholder="What this collection is about..." aria-label="Description" value={this.state.description}
+                        <FormControl placeholder="What this collection is about..." aria-label="Description"
+                                     value={this.state.description}
                                      onChange={this.handleChange.bind(this)}/>
                     </InputGroup>
                 </Form.Group>

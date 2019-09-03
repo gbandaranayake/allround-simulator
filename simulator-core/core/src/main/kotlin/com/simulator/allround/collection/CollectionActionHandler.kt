@@ -15,9 +15,9 @@ import java.util.stream.Collectors
 class CollectionActionHandler(@Autowired private val collectionRepository: CollectionMongoRepository) {
     fun create(collection: Mono<Collection>): Mono<ServerResponse> {
         return collection.flatMap {
-            collectionRepository.save(it)
-        }.flatMap {
-            ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromObject(it))
+            collectionRepository.save(it).flatMap { collection ->
+                ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromObject(collection))
+            }
         }
     }
 
@@ -26,7 +26,15 @@ class CollectionActionHandler(@Autowired private val collectionRepository: Colle
             ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromObject(it))
         }
     }
+
+    fun delete(collection: Mono<Collection>): Mono<ServerResponse> {
+        return collection.flatMap {
+            collectionRepository.delete(it).flatMap {
+                ServerResponse.ok().build()
+            }
+        }
+    }
 }
 
 @Document("collection-docs")
-data class Collection(@Id val id: String, val name: String, val description: String)
+data class Collection(@Id val id: String, val name: String?, val description: String?)

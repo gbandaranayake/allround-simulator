@@ -4,7 +4,8 @@ const URLPaths = {
     base : base,
     collections : {
         fetch : base + 'collections/all',
-        create : base + 'collections/create'
+        create : base + 'collections/create',
+        delete : base + 'collections/delete'
     }
 };
 
