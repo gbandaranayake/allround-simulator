@@ -3,13 +3,10 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
-import URLPaths from "../common/URLPaths";
-import {post} from "../common/HttpFetchConnector";
 import {Jumbotron} from "react-bootstrap";
-import Alert from "react-bootstrap/Alert";
-import Fade from "react-bootstrap/Fade";
-import Collapse from "react-bootstrap/Collapse";
 import SuccessNotification from "../common/SuccessNotification";
+import {post} from "../common/HttpFetchConnector";
+import URLPaths from "../common/URLPaths";
 
 class CreateCollectionForm extends React.Component {
     constructor(props) {
@@ -30,20 +27,23 @@ class CreateCollectionForm extends React.Component {
         }).then(function (response) {
             let activeNotificationsCopy = [...this.state.activeNotifications];
             activeNotificationsCopy.push({shown: true, message: "Collection " + this.state.collectionName + "created successfully!"});
-            this.setState({activeNotifications: activeNotificationsCopy});
+            this.setState({collectionName: '', description: '', activeNotifications: activeNotificationsCopy});
         }.bind(this), function (error) {
             console.log(error);
         });
-        this.setState({collectionName: '', description: ''});
+    }
+
+    setTimerForActiveNotificationRemoval(index) {
+        setTimeout(function () {
+            this.setState({
+                activeNotifications: this.state.activeNotifications.filter((n, i) => i !== index)
+            });
+        }.bind(this), 5000);
     }
 
     render() {
         let notifications = this.state.activeNotifications.map((notification, index) => {
-            setTimeout(function () {
-                this.setState({
-                    activeNotifications: this.state.activeNotifications.filter((n, i) => i !== index)
-                });
-            }.bind(this), 7000);
+            this.setTimerForActiveNotificationRemoval(index);
             return notification;
         }).map((notification, index) => <SuccessNotification shown={notification.shown} message={notification.message} key={"notif-" + index}/>);
 
