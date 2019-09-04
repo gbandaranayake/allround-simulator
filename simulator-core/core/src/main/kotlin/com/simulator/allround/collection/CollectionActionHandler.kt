@@ -37,4 +37,4 @@ class CollectionActionHandler(@Autowired private val collectionRepository: Colle
 }
 
 @Document("collection-docs")
-data class Collection(@Id val id: String, val name: String?, val description: String?)
+data class Collection(@Id val id: String?, val name: String?, val description: String?)
