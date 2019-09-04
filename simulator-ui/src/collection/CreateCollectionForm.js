@@ -24,28 +24,42 @@ class CreateCollectionForm extends React.Component {
         post(URLPaths.collections.create, {
             name: this.state.collectionName,
             description: this.state.description
-        }).then(function (response) {
-            let activeNotificationsCopy = [...this.state.activeNotifications];
-            activeNotificationsCopy.push({shown: true, message: "Collection " + this.state.collectionName + "created successfully!"});
-            this.setState({collectionName: '', description: '', activeNotifications: activeNotificationsCopy});
+        }).then(function () {
+            this.setState((state) => {
+                let activeNotificationsCopy = [...state.activeNotifications];
+                activeNotificationsCopy.push({
+                    shown: true,
+                    variant: "success",
+                    message: "Collection " + this.state.collectionName + "created successfully!"
+                });
+                return {
+                    activeNotifications: activeNotificationsCopy
+                }
+            });
         }.bind(this), function (error) {
-            console.log(error);
+            this.setState((state) => {
+                let activeNotificationsCopy = [...state.activeNotifications];
+                activeNotificationsCopy.push({
+                    shown: true,
+                    variant: "danger",
+                    message: "Oops! An error occurred while creating the collection " + this.state.collectionName
+                });
+                return {
+                    activeNotifications: activeNotificationsCopy
+                }
+            });
+        }.bind(this));
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        prevState.activeNotifications.length > 0 && this.setState({
+            activeNotifications: []
         });
     }
 
-    setTimerForActiveNotificationRemoval(index) {
-        setTimeout(function () {
-            this.setState({
-                activeNotifications: this.state.activeNotifications.filter((n, i) => i !== index)
-            });
-        }.bind(this), 5000);
-    }
-
     render() {
-        let notifications = this.state.activeNotifications.map((notification, index) => {
-            this.setTimerForActiveNotificationRemoval(index);
-            return notification;
-        }).map((notification, index) => <SuccessNotification shown={notification.shown} message={notification.message} key={"notif-" + index}/>);
+        let notifications = this.state.activeNotifications.map((notification, index) =>
+            <SuccessNotification shown={notification.shown} message={notification.message} variant={notification.variant} key={"notif-" + index}/>);
 
         return (
             <Jumbotron>
