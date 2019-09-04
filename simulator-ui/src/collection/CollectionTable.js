@@ -9,13 +9,15 @@ import Tooltip from "react-bootstrap/Tooltip";
 import {Jumbotron} from "react-bootstrap";
 import URLPaths from "../common/URLPaths";
 import {fireDelete, get} from "../common/HttpFetchConnector";
+import DialogModal from "../common/DialogModal";
 
 class CollectionTable extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {rows: []};
+        this.state = {rows: [], collectionToBeDeleted: undefined};
         this.fetchCollections = this.fetchCollections.bind(this);
         this.deleteCollection = this.deleteCollection.bind(this);
+        this.setCollectionToBeDeleted = this.setCollectionToBeDeleted.bind(this);
     }
 
     fetchCollections = () => {
@@ -45,11 +47,31 @@ class CollectionTable extends React.Component {
         clearInterval(this.timerId);
     }
 
+    setCollectionToBeDeleted(collection) {
+        this.setState(
+            {
+                collectionToBeDeleted: collection
+            }
+        );
+    }
+
     deleteCollection(rowId) {
         fireDelete(URLPaths.collections.delete, {
             id: rowId
         }).then(res => {
-            this.setState({rows: this.state.rows.filter(r => r.id !== rowId)})
+            this.setState((prevState, props) => {
+                return {
+                    rows: prevState.rows.filter(r => r.id !== rowId)
+                };
+            });
+        });
+    }
+
+    unsetCollectionToBeDeleted() {
+        this.setState((prevState, props) => {
+            return {
+                collectionToBeDeleted: undefined
+            };
         });
     }
 
@@ -57,14 +79,18 @@ class CollectionTable extends React.Component {
         if (this.state.rows.length === 0) {
             return null;
         }
+        const deleteModal = this.state.collectionToBeDeleted && (
+            <DialogModal
+                show={true}
+                header="Delete Collection"
+                body={"Are you sure you want to delete " + this.state.collectionToBeDeleted.name + "?"}
+                onConfirm={() => this.deleteCollection(this.state.collectionToBeDeleted.id)}
+                onExited={() => this.unsetCollectionToBeDeleted()}
+            />);
         const tableRowElements = this.state.rows.map((collection) =>
             <tr key={collection.id}>
-                <Fade in={true} appear={true} timeout={5000} duration={5000}>
-                    <td>{collection.name}</td>
-                </Fade>
-                <Fade in={true} appear={true} timeout={5000} duration={5000}>
-                    <td>{collection.description}</td>
-                </Fade>
+                <td>{collection.name}</td>
+                <td>{collection.description}</td>
                 <td style={{textAlign: "center"}}>
                     <OverlayTrigger
                         key="open-collection"
@@ -88,27 +114,31 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" style={{'backgroundColor': 'transparent', 'border': 'none'}}
-                                onClick={() => this.deleteCollection(collection.id)}><FaTrashAlt/></Button>
+                                onClick={() => this.setCollectionToBeDeleted(collection)}><FaTrashAlt/></Button>
                     </OverlayTrigger>
                 </td>
             </tr>
         );
-
         return (
-            <Jumbotron>
-                <Table bordered hover variant="dark" size="sm">
-                    <thead>
-                    <tr>
-                        <th className="font-weight-normal">Name</th>
-                        <th className="font-weight-normal">Description</th>
-                        <th className="font-weight-normal text-center">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {tableRowElements}
-                    </tbody>
-                </Table>
-            </Jumbotron>
+            <React.Fragment>
+                {deleteModal}
+                <Fade in={true} appear={true}>
+                    <Jumbotron>
+                        <Table bordered hover variant="dark" size="sm">
+                            <thead>
+                            <tr>
+                                <th className="font-weight-normal">Name</th>
+                                <th className="font-weight-normal">Description</th>
+                                <th className="font-weight-normal text-center">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {tableRowElements}
+                            </tbody>
+                        </Table>
+                    </Jumbotron>
+                </Fade>
+            </React.Fragment>
         )
     }
 }
