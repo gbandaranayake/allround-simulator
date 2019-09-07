@@ -79,32 +79,8 @@ class CollectionTable extends React.Component {
         })
     }
 
-    render() {
-        if (this.props.rows.length === 0 && this.state.activeNotifications.length === 0) {
-            return null;
-        }
-        const deleteModal = this.state.collectionToBeDeleted && (
-            <DialogModal
-                show={true}
-                header="Delete Collection"
-                body={"Are you sure you want to delete " + this.state.collectionToBeDeleted.name + "?"}
-                onConfirm={() => this.deleteCollection(this.state.collectionToBeDeleted.id)}
-                onExited={() => this.unsetCollectionToBeDeleted()}
-            />);
-
-        let notifications = this.state.activeNotifications.map((notification, index) =>
-            <EmbeddedNotification
-                shown={notification.shown}
-                message={notification.message}
-                variant={notification.variant}
-                key={"notif-" + index}
-                unmountCallback={() => this.setState((prevState) => {
-                    return {activeNotifications: prevState.activeNotifications.filter((notif, idx) => index !== idx)};
-                })}
-            />
-        );
-
-        const tableRowElements = this.props.rows.map((collection, index) =>
+    createTableRowElements() {
+        return this.props.rows.map((collection, index) =>
             <tr key={collection.id}>
                 <td>{collection.name}</td>
                 <td>{collection.description}</td>
@@ -183,6 +159,72 @@ class CollectionTable extends React.Component {
                 </td>
             </tr>
         );
+    }
+
+    createTableControlButtons() {
+        return  <div className="text-right">
+            <OverlayTrigger
+                placement="top"
+                overlay={
+                    <Tooltip>
+                        Filter collections
+                    </Tooltip>
+                }
+            >
+                <Button className="btn" size="sm"
+                        style={{
+                            'backgroundColor': 'transparent',
+                            color: '#5D6D7E',
+                            'border': 'none'
+                        }}
+                        onClick={() => this.toggleFilters()}><FaFilter/></Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+                placement="top"
+                overlay={
+                    <Tooltip>
+                        Show open collection
+                    </Tooltip>
+                }
+            >
+                <Button className="btn" size="sm"
+                        style={{
+                            'backgroundColor': 'transparent',
+                            color: '#5D6D7E',
+                            'border': 'none'
+                        }}
+                        onClick={() => console.log('filter clicked')}><FaCrosshairs/>
+                </Button>
+            </OverlayTrigger>
+        </div>;
+    }
+
+    render() {
+        if (this.props.rows.length === 0 && this.state.activeNotifications.length === 0) {
+            return null;
+        }
+        const deleteModal = this.state.collectionToBeDeleted && (
+            <DialogModal
+                show={true}
+                header="Delete Collection"
+                body={"Are you sure you want to delete " + this.state.collectionToBeDeleted.name + "?"}
+                onConfirm={() => this.deleteCollection(this.state.collectionToBeDeleted.id)}
+                onExited={() => this.unsetCollectionToBeDeleted()}
+            />);
+
+        let notifications = this.state.activeNotifications.map((notification, index) =>
+            <EmbeddedNotification
+                shown={notification.shown}
+                message={notification.message}
+                variant={notification.variant}
+                key={"notif-" + index}
+                unmountCallback={() => this.setState((prevState) => {
+                    return {activeNotifications: prevState.activeNotifications.filter((notif, idx) => index !== idx)};
+                })}
+            />
+        );
+
+        const tableRowElements = this.createTableRowElements();
         return (
             <React.Fragment>
                 {deleteModal}
@@ -192,22 +234,7 @@ class CollectionTable extends React.Component {
                         {
                             tableRowElements.length > 0 &&
                             <div>
-                                <div className="text-right">
-                                    <Button className="btn" size="sm"
-                                            style={{
-                                                'backgroundColor': 'transparent',
-                                                color: '#5D6D7E',
-                                                'border': 'none'
-                                            }}
-                                            onClick={() => this.toggleFilters()}><FaFilter/></Button>
-                                    <Button className="btn" size="sm"
-                                            style={{
-                                                'backgroundColor': 'transparent',
-                                                color: '#5D6D7E',
-                                                'border': 'none'
-                                            }}
-                                            onClick={() => console.log('filter clicked')}><FaCrosshairs/></Button>
-                                </div>
+                                {this.createTableControlButtons()}
                                 <Table bordered hover variant="dark" size="sm">
                                     <thead>
                                     <tr>
