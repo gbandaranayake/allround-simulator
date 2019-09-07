@@ -24,7 +24,7 @@ class CreateCollectionForm extends React.Component {
         post(URLPaths.collections.create, {
             name: this.state.collectionName,
             description: this.state.description
-        }).then(function () {
+        }).then((res) => {
             this.setState((state) => {
                 let activeNotificationsCopy = [...state.activeNotifications];
                 activeNotificationsCopy.push({
@@ -38,7 +38,8 @@ class CreateCollectionForm extends React.Component {
                     description: ''
                 }
             });
-        }.bind(this), function (error) {
+            this.props.newCollectionAddedCallback(res);
+        }, (error) => {
             this.setState((state) => {
                 let activeNotificationsCopy = [...state.activeNotifications];
                 activeNotificationsCopy.push({
@@ -50,7 +51,7 @@ class CreateCollectionForm extends React.Component {
                     activeNotifications: activeNotificationsCopy
                 }
             });
-        }.bind(this));
+        });
     }
 
     render() {

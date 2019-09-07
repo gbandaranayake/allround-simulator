@@ -8,7 +8,7 @@ import {FaTrashAlt} from "react-icons/fa";
 import Tooltip from "react-bootstrap/Tooltip";
 import {Jumbotron} from "react-bootstrap";
 import URLPaths from "../common/URLPaths";
-import {fireDelete, get} from "../common/HttpFetchConnector";
+import {fireDelete} from "../common/HttpFetchConnector";
 import DialogModal from "../common/DialogModal";
 import {FaEject} from "react-icons/fa";
 import EmbeddedNotification from "../common/EmbeddedNotification";
@@ -16,37 +16,9 @@ import EmbeddedNotification from "../common/EmbeddedNotification";
 class CollectionTable extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {rows: [], collectionToBeDeleted: undefined, activeNotifications: []};
-        this.fetchCollections = this.fetchCollections.bind(this);
+        this.state = {collectionToBeDeleted: undefined, activeNotifications: []};
         this.deleteCollection = this.deleteCollection.bind(this);
         this.setCollectionToBeDeleted = this.setCollectionToBeDeleted.bind(this);
-    }
-
-    fetchCollections = () => {
-        try {
-            let url = URLPaths.collections.fetch;
-            get(url).then(collections => {
-                this.setState({
-                    rows: collections
-                });
-            }, error => {
-                console.log('failed to fetch the collections list ' + this);
-            });
-        } catch (e) {
-            console.log('failed to fetch the collections list');
-        }
-    };
-
-    componentDidMount() {
-        this.fetchCollections();
-        this.timerId = setInterval(
-            () => this.fetchCollections(),
-            60000
-        );
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.timerId);
     }
 
     setCollectionToBeDeleted(collection) {
@@ -61,6 +33,7 @@ class CollectionTable extends React.Component {
         fireDelete(URLPaths.collections.delete, {
             id: rowId
         }).then(res => {
+            this.props.collectionDeletedCallback(rowId);
             this.setState((prevState, props) => {
                 let activeNotificationsCopy = [...prevState.activeNotifications];
                 activeNotificationsCopy.push({
@@ -69,7 +42,6 @@ class CollectionTable extends React.Component {
                     message: "Collection " + prevState.collectionToBeDeleted.name + " deleted successfully!"
                 });
                 return {
-                    rows: prevState.rows.filter(r => r.id !== rowId),
                     activeNotifications: activeNotificationsCopy
                 };
             });
@@ -97,7 +69,7 @@ class CollectionTable extends React.Component {
     }
 
     render() {
-        if (this.state.rows.length === 0 && this.state.activeNotifications.length === 0) {
+        if (this.props.rows.length === 0 && this.state.activeNotifications.length === 0) {
             return null;
         }
         const deleteModal = this.state.collectionToBeDeleted && (
@@ -121,7 +93,7 @@ class CollectionTable extends React.Component {
             />
         );
 
-        const tableRowElements = this.state.rows.map((collection, index) =>
+        const tableRowElements = this.props.rows.map((collection, index) =>
             <tr key={collection.id}>
                 <td>{collection.name}</td>
                 <td>{collection.description}</td>
