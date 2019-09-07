@@ -2,10 +2,10 @@ import React from "react";
 import Collapse from "react-bootstrap/Collapse";
 import Alert from "react-bootstrap/Alert";
 
-class SuccessNotification extends React.Component {
+class EmbeddedNotification extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {shown: props.shown}
+        this.state = {shown: props.shown};
     }
 
     componentDidMount() {
@@ -16,7 +16,7 @@ class SuccessNotification extends React.Component {
 
     render() {
         return (
-            <Collapse in={this.state.shown} appear={true} unmountOnExit={true}>
+            <Collapse in={this.state.shown} appear={true} unmountOnExit={true} onExited={() => this.props.unmountCallback && this.props.unmountCallback()}>
                 <div>
                     <Alert variant={this.props.variant}>
                         {this.props.message}
@@ -27,4 +27,4 @@ class SuccessNotification extends React.Component {
     }
 }
 
-export default SuccessNotification;
+export default EmbeddedNotification;

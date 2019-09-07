@@ -11,7 +11,6 @@ class DefaultNavBar extends React.Component {
         super(props);
         this.state = {tab: "collections", openCollection: undefined};
         this.changeTab = this.changeTab.bind(this);
-        console.log('constructore called');
         this.initializeTabs();
     }
 

@@ -11,11 +11,12 @@ import URLPaths from "../common/URLPaths";
 import {fireDelete, get} from "../common/HttpFetchConnector";
 import DialogModal from "../common/DialogModal";
 import {FaEject} from "react-icons/fa";
+import EmbeddedNotification from "../common/EmbeddedNotification";
 
 class CollectionTable extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {rows: [], collectionToBeDeleted: undefined};
+        this.state = {rows: [], collectionToBeDeleted: undefined, activeNotifications: []};
         this.fetchCollections = this.fetchCollections.bind(this);
         this.deleteCollection = this.deleteCollection.bind(this);
         this.setCollectionToBeDeleted = this.setCollectionToBeDeleted.bind(this);
@@ -61,9 +62,28 @@ class CollectionTable extends React.Component {
             id: rowId
         }).then(res => {
             this.setState((prevState, props) => {
+                let activeNotificationsCopy = [...prevState.activeNotifications];
+                activeNotificationsCopy.push({
+                    shown: true,
+                    variant: "success",
+                    message: "Collection " + prevState.collectionToBeDeleted.name + " deleted successfully!"
+                });
                 return {
-                    rows: prevState.rows.filter(r => r.id !== rowId)
+                    rows: prevState.rows.filter(r => r.id !== rowId),
+                    activeNotifications: activeNotificationsCopy
                 };
+            });
+        }, error => {
+            this.setState((state) => {
+                let activeNotificationsCopy = [...state.activeNotifications];
+                activeNotificationsCopy.push({
+                    shown: true,
+                    variant: "danger",
+                    message: "Oops! An error occurred while deleting the collection " + state.collectionToBeDeleted.name
+                });
+                return {
+                    activeNotifications: activeNotificationsCopy
+                }
             });
         });
     }
@@ -77,7 +97,7 @@ class CollectionTable extends React.Component {
     }
 
     render() {
-        if (this.state.rows.length === 0) {
+        if (this.state.rows.length === 0 && this.state.activeNotifications.length === 0) {
             return null;
         }
         const deleteModal = this.state.collectionToBeDeleted && (
@@ -88,6 +108,19 @@ class CollectionTable extends React.Component {
                 onConfirm={() => this.deleteCollection(this.state.collectionToBeDeleted.id)}
                 onExited={() => this.unsetCollectionToBeDeleted()}
             />);
+
+        let notifications = this.state.activeNotifications.map((notification, index) =>
+            <EmbeddedNotification
+                shown={notification.shown}
+                message={notification.message}
+                variant={notification.variant}
+                key={"notif-" + index}
+                unmountCallback={() => this.setState((prevState) => {
+                    return {activeNotifications: prevState.activeNotifications.filter((notif, idx) => index !== idx)};
+                })}
+            />
+        );
+
         const tableRowElements = this.state.rows.map((collection, index) =>
             <tr key={collection.id}>
                 <td>{collection.name}</td>
@@ -137,18 +170,22 @@ class CollectionTable extends React.Component {
                 {deleteModal}
                 <Fade in={true} appear={true}>
                     <Jumbotron>
-                        <Table bordered hover variant="dark" size="sm">
-                            <thead>
-                            <tr>
-                                <th className="font-weight-normal">Name</th>
-                                <th className="font-weight-normal">Description</th>
-                                <th className="font-weight-normal text-center">Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {tableRowElements}
-                            </tbody>
-                        </Table>
+                        {notifications}
+                        {
+                            tableRowElements.length > 0 &&
+                            <Table bordered hover variant="dark" size="sm">
+                                <thead>
+                                <tr>
+                                    <th className="font-weight-normal">Name</th>
+                                    <th className="font-weight-normal">Description</th>
+                                    <th className="font-weight-normal text-center">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {tableRowElements}
+                                </tbody>
+                            </Table>
+                        }
                     </Jumbotron>
                 </Fade>
             </React.Fragment>

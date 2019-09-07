@@ -4,7 +4,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import {Jumbotron} from "react-bootstrap";
-import SuccessNotification from "../common/SuccessNotification";
+import EmbeddedNotification from "../common/EmbeddedNotification";
 import {post} from "../common/HttpFetchConnector";
 import URLPaths from "../common/URLPaths";
 
@@ -30,7 +30,7 @@ class CreateCollectionForm extends React.Component {
                 activeNotificationsCopy.push({
                     shown: true,
                     variant: "success",
-                    message: "Collection " + this.state.collectionName + "created successfully!"
+                    message: "Collection " + state.collectionName + "created successfully!"
                 });
                 return {
                     activeNotifications: activeNotificationsCopy,
@@ -44,7 +44,7 @@ class CreateCollectionForm extends React.Component {
                 activeNotificationsCopy.push({
                     shown: true,
                     variant: "danger",
-                    message: "Oops! An error occurred while creating the collection " + this.state.collectionName
+                    message: "Oops! An error occurred while creating the collection " + state.collectionName
                 });
                 return {
                     activeNotifications: activeNotificationsCopy
@@ -53,15 +53,18 @@ class CreateCollectionForm extends React.Component {
         }.bind(this));
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        prevState.activeNotifications.length > 0 && this.setState({
-            activeNotifications: []
-        });
-    }
-
     render() {
         let notifications = this.state.activeNotifications.map((notification, index) =>
-            <SuccessNotification shown={notification.shown} message={notification.message} variant={notification.variant} key={"notif-" + index}/>);
+            <EmbeddedNotification
+                shown={notification.shown}
+                message={notification.message}
+                variant={notification.variant}
+                key={"notif-" + index}
+                unmountCallback={() => this.setState((prevState) => {
+                    return {activeNotifications: prevState.activeNotifications.filter((notif, idx) => index !== idx)};
+                })}
+            />
+        );
 
         return (
             <Jumbotron>
