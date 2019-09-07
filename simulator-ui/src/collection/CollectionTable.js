@@ -10,6 +10,7 @@ import {Jumbotron} from "react-bootstrap";
 import URLPaths from "../common/URLPaths";
 import {fireDelete, get} from "../common/HttpFetchConnector";
 import DialogModal from "../common/DialogModal";
+import {FaEject} from "react-icons/fa";
 
 class CollectionTable extends React.Component {
     constructor(props) {
@@ -87,34 +88,46 @@ class CollectionTable extends React.Component {
                 onConfirm={() => this.deleteCollection(this.state.collectionToBeDeleted.id)}
                 onExited={() => this.unsetCollectionToBeDeleted()}
             />);
-        const tableRowElements = this.state.rows.map((collection) =>
+        const tableRowElements = this.state.rows.map((collection, index) =>
             <tr key={collection.id}>
                 <td>{collection.name}</td>
                 <td>{collection.description}</td>
                 <td style={{textAlign: "center"}}>
                     <OverlayTrigger
-                        key="open-collection"
+                        key={'open-collection-' + index}
                         placement="bottom"
                         overlay={
-                            <Tooltip id={`tooltip-open-collection`}>
+                            <Tooltip id={`tooltip-open-collection` + index}>
                                 Open collection
                             </Tooltip>
                         }
                     >
-                        <Button className="btn"
+                        <Button className="btn" onClick={() => this.props.openCollectionCallback(collection)}
                                 style={{'backgroundColor': 'transparent', 'border': 'none'}}><FaBoxOpen/></Button>
                     </OverlayTrigger>
                     <OverlayTrigger
-                        key="delete-collection"
+                        key={'delete-collection-' + index}
                         placement="bottom"
                         overlay={
-                            <Tooltip id={`tooltip-delete-collection`}>
+                            <Tooltip id={`tooltip-delete-collection` + index}>
                                 Delete collection
                             </Tooltip>
                         }
                     >
                         <Button className="btn" style={{'backgroundColor': 'transparent', 'border': 'none'}}
                                 onClick={() => this.setCollectionToBeDeleted(collection)}><FaTrashAlt/></Button>
+                    </OverlayTrigger>
+                    <OverlayTrigger
+                        key={'exit-collection-' + index}
+                        placement="bottom"
+                        overlay={
+                            <Tooltip id={`tooltip-exit-collection` + index}>
+                                Exit collection
+                            </Tooltip>
+                        }
+                    >
+                        <Button className="btn" style={{'backgroundColor': 'transparent', 'border': 'none'}}
+                                onClick={() => this.props.openCollectionCallback()}><FaEject/></Button>
                     </OverlayTrigger>
                 </td>
             </tr>

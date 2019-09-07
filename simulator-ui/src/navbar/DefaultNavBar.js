@@ -4,20 +4,27 @@ import Nav from "react-bootstrap/Nav";
 import HttpClient from "../http/client/HttpClient";
 import Container from "react-bootstrap/Container";
 import Collections from "../collection/Collections";
+import Badge from "react-bootstrap/Badge";
 
 class DefaultNavBar extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {tab: "collections"};
+        this.state = {tab: "collections", openCollection: undefined};
         this.changeTab = this.changeTab.bind(this);
+        console.log('constructore called');
+        this.initializeTabs();
     }
 
-    tabs = {
-        'collections': <Collections/>,
-        'httpClient': <HttpClient/>,
-        'httpServer': <HttpClient/>,
-        'settings': <HttpClient/>
-    };
+    tabs = {};
+
+    initializeTabs() {
+        this.tabs = {
+            'collections': <Collections openCollectionCallback={(d) => this.setState({openCollection: d})}/>,
+            'httpClient': <HttpClient http={(this.state.openCollection || {}).httpClient}/>,
+            'httpServer': <HttpClient/>,
+            'settings': <HttpClient/>
+        };
+    }
 
     changeTab = eventKey => {
         this.setState({tab: eventKey})
@@ -31,7 +38,9 @@ class DefaultNavBar extends React.Component {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav variant="pills" defaultActiveKey="collections" onSelect={this.changeTab}>
                             <Nav.Item>
-                                <Nav.Link eventKey="collections">Collections</Nav.Link>
+                                <Nav.Link eventKey="collections">
+                                    Collections {this.state.openCollection && <Badge variant="success">{this.state.openCollection.name}</Badge>}
+                                </Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link eventKey="httpClient">HTTP Client</Nav.Link>

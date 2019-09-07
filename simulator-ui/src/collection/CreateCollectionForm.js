@@ -33,7 +33,9 @@ class CreateCollectionForm extends React.Component {
                     message: "Collection " + this.state.collectionName + "created successfully!"
                 });
                 return {
-                    activeNotifications: activeNotificationsCopy
+                    activeNotifications: activeNotificationsCopy,
+                    collectionName: '',
+                    description: ''
                 }
             });
         }.bind(this), function (error) {
