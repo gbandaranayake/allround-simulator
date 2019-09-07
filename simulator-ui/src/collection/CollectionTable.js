@@ -1,6 +1,6 @@
 import React from "react"
 import Table from "react-bootstrap/Table";
-import {FaBoxOpen} from "react-icons/fa";
+import {FaBoxOpen, FaDownload, FaListUl} from "react-icons/fa";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Fade from "react-bootstrap/Fade";
 import Button from "react-bootstrap/Button";
@@ -68,6 +68,10 @@ class CollectionTable extends React.Component {
         });
     }
 
+    displayCollectionSummary(collection) {
+
+    }
+
     render() {
         if (this.props.rows.length === 0 && this.state.activeNotifications.length === 0) {
             return null;
@@ -98,41 +102,68 @@ class CollectionTable extends React.Component {
                 <td>{collection.name}</td>
                 <td>{collection.description}</td>
                 <td style={{textAlign: "center"}}>
+                    {this.props.openCollection.id !== collection.id &&
                     <OverlayTrigger
                         key={'open-collection-' + index}
                         placement="bottom"
                         overlay={
                             <Tooltip id={`tooltip-open-collection` + index}>
-                                Open collection
+                                Open the collection
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" onClick={() => this.props.openCollectionCallback(collection)}
-                                style={{'backgroundColor': 'transparent', 'border': 'none'}}><FaBoxOpen/></Button>
+                        <Button className="btn" size="sm" onClick={() => this.props.openCollectionCallback(collection)}
+                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}><FaBoxOpen/></Button>
+                    </OverlayTrigger>
+                    }
+                    {this.props.openCollection.id === collection.id &&
+                    <OverlayTrigger
+                        key={'exit-collection-' + index}
+                        placement="bottom"
+                        overlay={
+                            <Tooltip id={`tooltip-exit-collection` + index}>
+                                Exit the collection
+                            </Tooltip>
+                        }
+                    >
+                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                onClick={() => this.props.openCollectionCallback({})}><FaEject/></Button>
+                    </OverlayTrigger>}
+                    <OverlayTrigger
+                        key={'display-collection-summary-' + index}
+                        placement="bottom"
+                        overlay={
+                            <Tooltip id={`tooltip-summary-collection` + index}>
+                                View collection summary
+                            </Tooltip>
+                        }
+                    >
+                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                onClick={() => this.displayCollectionSummary(collection)}><FaListUl/></Button>
+                    </OverlayTrigger>
+                    <OverlayTrigger
+                        key={'download-collection-' + index}
+                        placement="bottom"
+                        overlay={
+                            <Tooltip id={`tooltip-download-collection` + index}>
+                                Download the collection as a zip file
+                            </Tooltip>
+                        }
+                    >
+                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                onClick={() => this.downloadCollection(collection)}><FaDownload/></Button>
                     </OverlayTrigger>
                     <OverlayTrigger
                         key={'delete-collection-' + index}
                         placement="bottom"
                         overlay={
                             <Tooltip id={`tooltip-delete-collection` + index}>
-                                Delete collection
+                                Delete the collection
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" style={{'backgroundColor': 'transparent', 'border': 'none'}}
+                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
                                 onClick={() => this.setCollectionToBeDeleted(collection)}><FaTrashAlt/></Button>
-                    </OverlayTrigger>
-                    <OverlayTrigger
-                        key={'exit-collection-' + index}
-                        placement="bottom"
-                        overlay={
-                            <Tooltip id={`tooltip-exit-collection` + index}>
-                                Exit collection
-                            </Tooltip>
-                        }
-                    >
-                        <Button className="btn" style={{'backgroundColor': 'transparent', 'border': 'none'}}
-                                onClick={() => this.props.openCollectionCallback()}><FaEject/></Button>
                     </OverlayTrigger>
                 </td>
             </tr>
@@ -162,6 +193,10 @@ class CollectionTable extends React.Component {
                 </Fade>
             </React.Fragment>
         )
+    }
+
+    downloadCollection(collection) {
+
     }
 }
 

@@ -51,6 +51,7 @@ class Collections extends React.Component {
                         })}
                     />
                     <CollectionTable
+                        openCollection={this.props.openCollection}
                         openCollectionCallback={this.props.openCollectionCallback}
                         rows={this.state.collections}
                         collectionDeletedCallback={(rowId) => this.setState((prevState) => {

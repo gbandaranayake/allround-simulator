@@ -9,20 +9,17 @@ import Badge from "react-bootstrap/Badge";
 class DefaultNavBar extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {tab: "collections", openCollection: undefined};
+        this.state = {tab: "collections", openCollection: {}};
         this.changeTab = this.changeTab.bind(this);
-        this.initializeTabs();
     }
 
-    tabs = {};
-
-    initializeTabs() {
-        this.tabs = {
-            'collections': <Collections openCollectionCallback={(d) => this.setState({openCollection: d})}/>,
-            'httpClient': <HttpClient http={(this.state.openCollection || {}).httpClient}/>,
-            'httpServer': <HttpClient/>,
-            'settings': <HttpClient/>
-        };
+    getTab(tabName) {
+        switch (tabName) {
+            case 'collections': return <Collections openCollectionCallback={(d) => this.setState({openCollection: d})} openCollection={this.state.openCollection}/>;
+            case 'httpClient' : return <HttpClient http={(this.state.openCollection || {}).httpClient}/>;
+                case 'httpServer' : return <HttpClient/>;
+            case 'settings' : return <HttpClient/>;
+        }
     }
 
     changeTab = eventKey => {
@@ -38,7 +35,7 @@ class DefaultNavBar extends React.Component {
                         <Nav variant="pills" defaultActiveKey="collections" onSelect={this.changeTab}>
                             <Nav.Item>
                                 <Nav.Link eventKey="collections">
-                                    Collections {this.state.openCollection && <Badge variant="success">{this.state.openCollection.name}</Badge>}
+                                    Collections {this.state.openCollection.name && <Badge variant="success">{this.state.openCollection.name}</Badge>}
                                 </Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
@@ -53,7 +50,7 @@ class DefaultNavBar extends React.Component {
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
-                {this.tabs[this.state.tab]}
+                {this.getTab(this.state.tab)}
             </Container>
         )
     }
