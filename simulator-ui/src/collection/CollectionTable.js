@@ -1,6 +1,6 @@
 import React from "react"
 import Table from "react-bootstrap/Table";
-import {FaBoxOpen, FaDownload, FaListUl} from "react-icons/fa";
+import {FaBoxOpen, FaCrosshairs, FaDownload, FaWpforms} from "react-icons/fa";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Fade from "react-bootstrap/Fade";
 import Button from "react-bootstrap/Button";
@@ -12,11 +12,12 @@ import {fireDelete} from "../common/HttpFetchConnector";
 import DialogModal from "../common/DialogModal";
 import {FaEject} from "react-icons/fa";
 import EmbeddedNotification from "../common/EmbeddedNotification";
+import {FaFilter} from "react-icons/fa";
 
 class CollectionTable extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {collectionToBeDeleted: undefined, activeNotifications: []};
+        this.state = {collectionToBeDeleted: undefined, activeNotifications: [], filtersHidden: true};
         this.deleteCollection = this.deleteCollection.bind(this);
         this.setCollectionToBeDeleted = this.setCollectionToBeDeleted.bind(this);
     }
@@ -72,6 +73,12 @@ class CollectionTable extends React.Component {
 
     }
 
+    toggleFilters() {
+        this.setState((prevState) => {
+            return {filtersHidden: !prevState.filtersHidden}
+        })
+    }
+
     render() {
         if (this.props.rows.length === 0 && this.state.activeNotifications.length === 0) {
             return null;
@@ -113,7 +120,11 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" size="sm" onClick={() => this.props.openCollectionCallback(collection)}
-                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}><FaBoxOpen/></Button>
+                                style={{
+                                    'backgroundColor': 'transparent',
+                                    color: '#AED6F1',
+                                    'border': 'none'
+                                }}><FaBoxOpen/></Button>
                     </OverlayTrigger>
                     }
                     {this.props.openCollection.id === collection.id &&
@@ -126,7 +137,8 @@ class CollectionTable extends React.Component {
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                        <Button className="btn" size="sm"
+                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
                                 onClick={() => this.props.openCollectionCallback({})}><FaEject/></Button>
                     </OverlayTrigger>}
                     <OverlayTrigger
@@ -138,8 +150,9 @@ class CollectionTable extends React.Component {
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
-                                onClick={() => this.displayCollectionSummary(collection)}><FaListUl/></Button>
+                        <Button className="btn" size="sm"
+                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                onClick={() => this.displayCollectionSummary(collection)}><FaWpforms/></Button>
                     </OverlayTrigger>
                     <OverlayTrigger
                         key={'download-collection-' + index}
@@ -150,7 +163,8 @@ class CollectionTable extends React.Component {
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                        <Button className="btn" size="sm"
+                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
                                 onClick={() => this.downloadCollection(collection)}><FaDownload/></Button>
                     </OverlayTrigger>
                     <OverlayTrigger
@@ -162,7 +176,8 @@ class CollectionTable extends React.Component {
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" size="sm" style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                        <Button className="btn" size="sm"
+                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
                                 onClick={() => this.setCollectionToBeDeleted(collection)}><FaTrashAlt/></Button>
                     </OverlayTrigger>
                 </td>
@@ -176,18 +191,52 @@ class CollectionTable extends React.Component {
                         {notifications}
                         {
                             tableRowElements.length > 0 &&
-                            <Table bordered hover variant="dark" size="sm">
-                                <thead>
-                                <tr>
-                                    <th className="font-weight-normal">Name</th>
-                                    <th className="font-weight-normal">Description</th>
-                                    <th className="font-weight-normal text-center">Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {tableRowElements}
-                                </tbody>
-                            </Table>
+                            <div>
+                                <div className="text-right">
+                                    <Button className="btn" size="sm"
+                                            style={{
+                                                'backgroundColor': 'transparent',
+                                                color: '#5D6D7E',
+                                                'border': 'none'
+                                            }}
+                                            onClick={() => this.toggleFilters()}><FaFilter/></Button>
+                                    <Button className="btn" size="sm"
+                                            style={{
+                                                'backgroundColor': 'transparent',
+                                                color: '#5D6D7E',
+                                                'border': 'none'
+                                            }}
+                                            onClick={() => console.log('filter clicked')}><FaCrosshairs/></Button>
+                                </div>
+                                <Table bordered hover variant="dark" size="sm">
+                                    <thead>
+                                    <tr>
+                                        <th className="font-weight-normal text-center" style={{'width': '20%'}}>Name
+                                        </th>
+                                        <th className="font-weight-normal text-center"
+                                            style={{'width': '60%'}}>Description
+                                        </th>
+                                        <th className="font-weight-normal text-center"
+                                            style={{'width': '20%'}}>Actions
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr hidden={this.state.filtersHidden}>
+                                        <td>
+                                            <input type="text"/>
+                                        </td>
+                                        <td>
+                                            <input type="text" style={{'width': '-webkit-fill-available'}}/>
+                                        </td>
+                                        <td>
+                                            <input type="text" disabled={true}/>
+                                        </td>
+                                    </tr>
+                                    {tableRowElements}
+                                    </tbody>
+                                </Table>
+                            </div>
                         }
                     </Jumbotron>
                 </Fade>
