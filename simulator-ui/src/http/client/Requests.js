@@ -114,12 +114,13 @@ class Requests extends React.Component {
 
         let headerElements = this.state.editingReq.headers.map((h) => (
             <KeyValueInputPair
+                id={h.id}
                 key={h.id}
                 keyLabel="Header name"
                 valueLabel="Header value"
                 keyValue={h.headerName}
                 value={h.value}
-                keyHandler={(d) => {
+                onKeyChange={(d) => {
                     this.setState((state) => {
                         let copy = JSON.parse(JSON.stringify(state.editingReq));
                         copy.headers.find(head => head.id === h.id).keyValue = d;
@@ -128,10 +129,19 @@ class Requests extends React.Component {
                         }
                     })
                 }}
-                valueHandler={(d) => {
+                onValueChange={(d) => {
                     this.setState((state) => {
                         let copy = JSON.parse(JSON.stringify(state.editingReq));
                         copy.headers.find(head => head.id === h.id).value = d;
+                        return {
+                            editingReq: copy
+                        }
+                    })
+                }}
+                onDelete={(d) => {
+                    this.setState((state) => {
+                        let copy = JSON.parse(JSON.stringify(state.editingReq));
+                        copy.headers = copy.headers.filter(head => head.id !== h.id);
                         return {
                             editingReq: copy
                         }
@@ -179,7 +189,7 @@ class Requests extends React.Component {
                                 </Tooltip>
                             }
                         >
-                            <Button className="btn" size="lg"
+                            <Button className="btn" size="sm"
                                     style={{
                                         'backgroundColor': 'transparent',
                                         color: '#14bd00',
