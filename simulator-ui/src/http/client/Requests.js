@@ -10,6 +10,10 @@ import '../../Custom.css';
 import {post} from "../../common/HttpFetchConnector";
 import URLPaths from "../../common/URLPaths";
 import EmbeddedNotification from "../../common/EmbeddedNotification";
+import KeyValueInputPair from "../../common/KeyValueInputPair";
+import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import {FaPlusCircle} from "react-icons/fa";
 
 class Requests extends React.Component {
     constructor(props) {
@@ -116,15 +120,38 @@ class Requests extends React.Component {
                             </ButtonToolbar>
                         </InputGroup>
                     </Form.Group>
-                    <Form.Group controlId="host">
+                    <Form.Group controlId="uri">
                         <InputGroup className="mb-3 col-sm-12">
                             <InputGroup.Prepend>
-                                <InputGroup.Text id="uri">URI</InputGroup.Text>
+                                <InputGroup.Text id="uri-label">URI</InputGroup.Text>
                             </InputGroup.Prepend>
-                            <FormControl placeholder="Paste URI here.." aria-label="Host" aria-describedby="uri"
+                            <FormControl placeholder="Paste URI here.." aria-label="URI" aria-describedby="uri-label"
                                          onChange={(e) => this.handleUriChange(e)}/>
                         </InputGroup>
                     </Form.Group>
+                    <Form.Group className="col-sm-12" controlId="body">
+                        <Form.Label id="body-label">Request body</Form.Label>
+                        <Form.Control as="textarea" rows="6" aria-describedby="body-label" />
+                    </Form.Group>
+                    <KeyValueInputPair keyLabel="Header name" valueLabel="Header value"/>
+                    <div className="text-right mr-2">
+                        <OverlayTrigger
+                            placement="right"
+                            overlay={
+                                <Tooltip>
+                                    Add HTTP header
+                                </Tooltip>
+                            }
+                        >
+                            <Button className="btn" size="lg"
+                                    style={{
+                                        'backgroundColor': 'transparent',
+                                        color: '#14bd00',
+                                        'border': 'none'
+                                    }}
+                                    onClick={() => console.log('header added')}><FaPlusCircle/></Button>
+                        </OverlayTrigger>
+                    </div>
                     <Button variant="success" type="submit">
                         Save
                     </Button>
