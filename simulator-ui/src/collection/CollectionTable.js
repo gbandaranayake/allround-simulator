@@ -17,7 +17,12 @@ import {FaFilter} from "react-icons/fa";
 class CollectionTable extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {collectionToBeDeleted: undefined, activeNotifications: [], filtersHidden: true};
+        let filters = {
+            filtersHidden: true,
+            name: '',
+            description: ''
+        };
+        this.state = {collectionToBeDeleted: undefined, activeNotifications: [], filters: filters};
         this.deleteCollection = this.deleteCollection.bind(this);
         this.setCollectionToBeDeleted = this.setCollectionToBeDeleted.bind(this);
     }
@@ -62,10 +67,8 @@ class CollectionTable extends React.Component {
     }
 
     unsetCollectionToBeDeleted() {
-        this.setState((prevState, props) => {
-            return {
-                collectionToBeDeleted: undefined
-            };
+        this.setState({
+            collectionToBeDeleted: undefined
         });
     }
 
@@ -75,12 +78,26 @@ class CollectionTable extends React.Component {
 
     toggleFilters() {
         this.setState((prevState) => {
-            return {filtersHidden: !prevState.filtersHidden}
+            return {
+                filters: {
+                    filtersHidden: !prevState.filters.filtersHidden,
+                    name: prevState.filters.name,
+                    description: prevState.filters.description
+                }
+            }
         })
     }
 
-    createTableRowElements() {
-        return this.props.rows.map((collection, index) =>
+    getFilteredRows() {
+        if (this.state.filters.filtersHidden || (this.state.filters.name === '' && this.state.filters.description === '')) {
+            return this.props.rows;
+        }
+        return this.props.rows.filter((col) => (this.state.filters.name === '' || col.name.includes(this.state.filters.name))
+            && (this.state.filters.description === '' || col.description.includes(this.state.filters.description)));
+    }
+
+    mapRowsDataToTableElements(collections) {
+        return collections.map((collection, index) =>
             <tr key={collection.id}>
                 <td>{collection.name}</td>
                 <td>{collection.description}</td>
@@ -162,7 +179,7 @@ class CollectionTable extends React.Component {
     }
 
     createTableControlButtons() {
-        return  <div className="text-right">
+        return <div className="text-right">
             <OverlayTrigger
                 placement="top"
                 overlay={
@@ -199,6 +216,32 @@ class CollectionTable extends React.Component {
         </div>;
     }
 
+    handleNameFilterInputChange(e) {
+        const newNameValue = e.nativeEvent.target.value;
+        this.setState((prevState) => {
+            return {
+                filters: {
+                    filtersHidden: prevState.filters.filtersHidden,
+                    name: newNameValue,
+                    description: prevState.filters.description
+                }
+            }
+        });
+    }
+
+    handleDescriptionFilterInputChange(e) {
+        const newDescriptionValue = e.nativeEvent.target.value;
+        this.setState((prevState) => {
+            return {
+                filters: {
+                    filtersHidden: prevState.filters.filtersHidden,
+                    name: prevState.filters.name,
+                    description: newDescriptionValue
+                }
+            }
+        });
+    }
+
     render() {
         if (this.props.rows.length === 0 && this.state.activeNotifications.length === 0) {
             return null;
@@ -224,47 +267,47 @@ class CollectionTable extends React.Component {
             />
         );
 
-        const tableRowElements = this.createTableRowElements();
+        let filteredRows = this.getFilteredRows();
+        const tableRowElements = this.mapRowsDataToTableElements(filteredRows);
         return (
             <React.Fragment>
                 {deleteModal}
                 <Fade in={true} appear={true}>
                     <Jumbotron>
                         {notifications}
-                        {
-                            tableRowElements.length > 0 &&
-                            <div>
-                                {this.createTableControlButtons()}
-                                <Table bordered hover variant="dark" size="sm">
-                                    <thead>
-                                    <tr>
-                                        <th className="font-weight-normal text-center" style={{'width': '20%'}}>Name
-                                        </th>
-                                        <th className="font-weight-normal text-center"
-                                            style={{'width': '60%'}}>Description
-                                        </th>
-                                        <th className="font-weight-normal text-center"
-                                            style={{'width': '20%'}}>Actions
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr hidden={this.state.filtersHidden}>
-                                        <td>
-                                            <input type="text"/>
-                                        </td>
-                                        <td>
-                                            <input type="text" style={{'width': '-webkit-fill-available'}}/>
-                                        </td>
-                                        <td>
-                                            <input type="text" disabled={true}/>
-                                        </td>
-                                    </tr>
-                                    {tableRowElements}
-                                    </tbody>
-                                </Table>
-                            </div>
-                        }
+                        <div>
+                            {this.createTableControlButtons()}
+                            <Table bordered hover variant="dark" size="sm">
+                                <thead>
+                                <tr>
+                                    <th className="font-weight-normal text-center" style={{'width': '20%'}}>Name
+                                    </th>
+                                    <th className="font-weight-normal text-center"
+                                        style={{'width': '60%'}}>Description
+                                    </th>
+                                    <th className="font-weight-normal text-center"
+                                        style={{'width': '20%'}}>Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr hidden={this.state.filters.filtersHidden}>
+                                    <td>
+                                        <input type="text"
+                                               onChange={(e) => this.handleNameFilterInputChange(e)}/>
+                                    </td>
+                                    <td>
+                                        <input type="text" style={{'width': '-webkit-fill-available'}}
+                                               onChange={(e) => this.handleDescriptionFilterInputChange(e)}/>
+                                    </td>
+                                    <td>
+                                        <input type="text" disabled={true}/>
+                                    </td>
+                                </tr>
+                                {tableRowElements}
+                                </tbody>
+                            </Table>
+                        </div>
                     </Jumbotron>
                 </Fade>
             </React.Fragment>
