@@ -37,7 +37,7 @@ class DefaultNavBar extends React.Component {
     render() {
         return (
             <Container fluid>
-                <Navbar bg="dark" expand="lg" variant="dark">
+                <Navbar bg="dark" expand="lg" variant="dark" fixed="top">
                     <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav variant="pills" defaultActiveKey="collections" onSelect={this.changeTab}>

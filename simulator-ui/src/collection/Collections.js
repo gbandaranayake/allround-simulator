@@ -42,23 +42,21 @@ class Collections extends React.Component {
     render() {
         return (
             <Container>
-                <div className="mt-4">
-                    <CreateCollectionForm
-                        newCollectionAddedCallback={(collection) => this.setState((prevState) => {
-                            let collectionsCopy = [...prevState.collections];
-                            collectionsCopy.push(collection);
-                            return {collections: collectionsCopy};
-                        })}
-                    />
-                    <CollectionTable
-                        openCollection={this.props.openCollection}
-                        openCollectionCallback={this.props.openCollectionCallback}
-                        rows={this.state.collections}
-                        collectionDeletedCallback={(rowId) => this.setState((prevState) => {
-                            return {collections: prevState.collections.filter(r => r.id !== rowId)};
-                        })}
-                    />
-                </div>
+                <CreateCollectionForm
+                    newCollectionAddedCallback={(collection) => this.setState((prevState) => {
+                        let collectionsCopy = [...prevState.collections];
+                        collectionsCopy.push(collection);
+                        return {collections: collectionsCopy};
+                    })}
+                />
+                <CollectionTable
+                    openCollection={this.props.openCollection}
+                    openCollectionCallback={this.props.openCollectionCallback}
+                    rows={this.state.collections}
+                    collectionDeletedCallback={(rowId) => this.setState((prevState) => {
+                        return {collections: prevState.collections.filter(r => r.id !== rowId)};
+                    })}
+                />
             </Container>
         )
     }
