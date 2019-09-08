@@ -30,7 +30,7 @@ class CreateCollectionForm extends React.Component {
                 activeNotificationsCopy.push({
                     shown: true,
                     variant: "success",
-                    message: "Collection " + state.collectionName + "created successfully!"
+                    message: "Collection " + state.collectionName + " created successfully!"
                 });
                 return {
                     activeNotifications: activeNotificationsCopy,
@@ -55,14 +55,14 @@ class CreateCollectionForm extends React.Component {
     }
 
     render() {
-        let notifications = this.state.activeNotifications.map((notification, index) =>
+        let notifications = this.state.activeNotifications.map((notification) =>
             <EmbeddedNotification
                 shown={notification.shown}
                 message={notification.message}
                 variant={notification.variant}
-                key={"notif-" + index}
+                key={notification.message}
                 unmountCallback={() => this.setState((prevState) => {
-                    return {activeNotifications: prevState.activeNotifications.filter((notif, idx) => index !== idx)};
+                    return {activeNotifications: prevState.activeNotifications.filter((notif) => notif.message !== notification.message)};
                 })}
             />
         );

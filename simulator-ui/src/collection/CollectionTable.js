@@ -40,7 +40,6 @@ class CollectionTable extends React.Component {
         fireDelete(URLPaths.collections.delete, {
             id: rowId
         }).then(res => {
-            this.props.collectionDeletedCallback(rowId);
             this.setState((prevState, props) => {
                 let activeNotificationsCopy = [...prevState.activeNotifications];
                 activeNotificationsCopy.push({
@@ -67,7 +66,8 @@ class CollectionTable extends React.Component {
         });
     }
 
-    unsetCollectionToBeDeleted() {
+    unsetCollectionToBeDeleted(rowId) {
+        this.props.collectionDeletedCallback(rowId);
         this.setState({
             collectionToBeDeleted: undefined
         });
@@ -283,7 +283,7 @@ class CollectionTable extends React.Component {
                 header="Delete Collection"
                 body={"Are you sure you want to delete " + this.state.collectionToBeDeleted.name + "?"}
                 onConfirm={() => this.deleteCollection(this.state.collectionToBeDeleted.id)}
-                onExited={() => this.unsetCollectionToBeDeleted()}
+                onExited={() => this.unsetCollectionToBeDeleted(this.state.collectionToBeDeleted.id)}
             />);
 
         let notifications = this.state.activeNotifications.map((notification, index) =>
@@ -291,7 +291,7 @@ class CollectionTable extends React.Component {
                 shown={notification.shown}
                 message={notification.message}
                 variant={notification.variant}
-                key={"notif-" + index}
+                key={notification.message}
                 unmountCallback={() => this.setState((prevState) => {
                     return {activeNotifications: prevState.activeNotifications.filter((notif, idx) => index !== idx)};
                 })}
