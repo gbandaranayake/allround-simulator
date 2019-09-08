@@ -1,9 +1,9 @@
 import React from "react"
 import {Jumbotron} from "react-bootstrap";
-import ClientParameters from "./ClientParameters";
 import Container from "react-bootstrap/Container";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
+import Requests from "./Requests";
 
 function HttpClient() {
     return (
@@ -11,13 +11,13 @@ function HttpClient() {
             <div className="mt-4">
                 <Jumbotron>
                     <h3>HTTP Client Configurations</h3>
-                    <Tabs defaultActiveKey="connection" id="uncontrolled-tab-example">
-                        <Tab eventKey="connection" title="Connection">
-                            <ClientParameters/>
-                        </Tab>
+                    <Tabs defaultActiveKey="requests" id="request-tabs">
                         <Tab eventKey="requests" title="Requests">
+                            <Requests/>
                         </Tab>
-                        <Tab eventKey="automation" title="Automation">
+                        <Tab eventKey="statistics" title="Statistics">
+                        </Tab>
+                        <Tab eventKey="tests" title="Tests">
                         </Tab>
                     </Tabs>
                 </Jumbotron>

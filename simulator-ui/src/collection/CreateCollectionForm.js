@@ -143,7 +143,7 @@ class CreateCollectionForm extends React.Component {
                             />
                         </InputGroup>
                     </Form.Group>
-                    <Button variant="primary" type="submit">
+                    <Button variant="success" type="submit">
                         Create
                     </Button>
                 </Form>
