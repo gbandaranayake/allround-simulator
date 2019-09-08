@@ -1,6 +1,6 @@
 import React from "react"
 import Table from "react-bootstrap/Table";
-import {FaBoxOpen, FaCrosshairs, FaDownload, FaListUl, FaWpforms} from "react-icons/fa";
+import {FaCrosshairs, FaDownload, FaEnvelopeOpen, FaListUl, FaWpforms} from "react-icons/fa";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Fade from "react-bootstrap/Fade";
 import Button from "react-bootstrap/Button";
@@ -123,7 +123,7 @@ class CollectionTable extends React.Component {
                                     'backgroundColor': 'transparent',
                                     color: '#AED6F1',
                                     'border': 'none'
-                                }}><FaBoxOpen/></Button>
+                                }}><FaEnvelopeOpen/></Button>
                     </OverlayTrigger>
                     }
                     {this.props.openCollection.id === collection.id &&
