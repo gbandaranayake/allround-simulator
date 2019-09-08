@@ -138,7 +138,7 @@ class Requests extends React.Component {
                         }
                     })
                 }}
-                onDelete={(d) => {
+                onDelete={() => {
                     this.setState((state) => {
                         let copy = JSON.parse(JSON.stringify(state.editingReq));
                         copy.headers = copy.headers.filter(head => head.id !== h.id);

@@ -10,10 +10,12 @@ function KeyValueInputPair(props) {
     return (
         <Form.Row className="mb-3 col-sm-12">
             <Col>
-                <Form.Control placeholder={props.keyLabel} defaultValue={props.keyValue} onChange={(e) => props.onKeyChange && props.onKeyChange(e.target.value)}/>
+                <Form.Control placeholder={props.keyLabel} defaultValue={props.keyValue}
+                              onChange={(e) => props.onKeyChange && props.onKeyChange(e.target.value)}/>
             </Col>
             <Col>
-                <Form.Control placeholder={props.valueLabel} defaultValue={props.value} onChange={(e) => props.onValueChange && props.onValueChange(e.target.value)}/>
+                <Form.Control placeholder={props.valueLabel} defaultValue={props.value}
+                              onChange={(e) => props.onValueChange && props.onValueChange(e.target.value)}/>
             </Col>
             <Col className="col-sm-1">
                 <OverlayTrigger
@@ -30,7 +32,7 @@ function KeyValueInputPair(props) {
                                 color: '#bd0030',
                                 'border': 'none'
                             }}
-                            onClick={() => props.onDelete && props.onDelete(props.id)}><FaMinusCircle/></Button>
+                            onClick={() => props.onDelete && props.onDelete()}><FaMinusCircle/></Button>
                 </OverlayTrigger>
             </Col>
         </Form.Row>
