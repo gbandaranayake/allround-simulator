@@ -1,6 +1,6 @@
 import React from "react"
 import Table from "react-bootstrap/Table";
-import {FaBoxOpen, FaCrosshairs, FaDownload, FaWpforms} from "react-icons/fa";
+import {FaBoxOpen, FaCrosshairs, FaDownload, FaListUl, FaWpforms} from "react-icons/fa";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Fade from "react-bootstrap/Fade";
 import Button from "react-bootstrap/Button";
@@ -20,7 +20,8 @@ class CollectionTable extends React.Component {
         let filters = {
             filtersHidden: true,
             name: '',
-            description: ''
+            description: '',
+            showOpenCollection: false
         };
         this.state = {collectionToBeDeleted: undefined, activeNotifications: [], filters: filters};
         this.deleteCollection = this.deleteCollection.bind(this);
@@ -89,6 +90,9 @@ class CollectionTable extends React.Component {
     }
 
     getFilteredRows() {
+        if (this.state.filters.showOpenCollection && this.props.openCollection.name) {
+            return [this.props.openCollection];
+        }
         if (this.state.filters.filtersHidden || (this.state.filters.name === '' && this.state.filters.description === '')) {
             return this.props.rows;
         }
@@ -178,6 +182,16 @@ class CollectionTable extends React.Component {
         );
     }
 
+    setShowOpenCollectionState(show) {
+        this.setState((prevState) => {
+         let copy = JSON.parse(JSON.stringify(prevState.filters));
+         copy.showOpenCollection = show;
+         return {
+             filters: copy
+         }
+        });
+    }
+
     createTableControlButtons() {
         return <div className="text-right">
             <OverlayTrigger
@@ -210,7 +224,24 @@ class CollectionTable extends React.Component {
                             color: '#5D6D7E',
                             'border': 'none'
                         }}
-                        onClick={() => console.log('filter clicked')}><FaCrosshairs/>
+                        onClick={() => this.setShowOpenCollectionState(true)}><FaCrosshairs/>
+                </Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+                placement="top"
+                overlay={
+                    <Tooltip>
+                        Show all collections
+                    </Tooltip>
+                }
+            >
+                <Button className="btn" size="sm"
+                        style={{
+                            'backgroundColor': 'transparent',
+                            color: '#5D6D7E',
+                            'border': 'none'
+                        }}
+                        onClick={() => this.setShowOpenCollectionState(false)}><FaListUl/>
                 </Button>
             </OverlayTrigger>
         </div>;
