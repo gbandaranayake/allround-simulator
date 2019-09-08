@@ -59,7 +59,9 @@ class Requests extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        post(URLPaths.httpRequests.create, this.state.editingReq)
+        let copy = JSON.parse(JSON.stringify(this.state.editingReq));
+        copy.collectionId = this.props.collectionId;
+        post(URLPaths.httpRequests.create, copy)
             .then((res) => {
                 this.handleSubmitRes(res);
             }, (error) => {

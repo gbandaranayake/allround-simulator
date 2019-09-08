@@ -5,15 +5,15 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import Requests from "./Requests";
 
-function HttpClient() {
+function HttpClient(props) {
     return (
         <Container>
             <div className="mt-4">
                 <Jumbotron>
-                    <h3>HTTP Client Configurations</h3>
+                    <h3>HTTP Requests</h3>
                     <Tabs defaultActiveKey="requests" id="request-tabs">
                         <Tab eventKey="requests" title="Requests">
-                            <Requests/>
+                            <Requests collectionId={props.collectionId}/>
                         </Tab>
                         <Tab eventKey="statistics" title="Statistics">
                         </Tab>
