@@ -43,6 +43,7 @@ class CollectionTable extends React.Component {
             this.setState((prevState, props) => {
                 let activeNotificationsCopy = [...prevState.activeNotifications];
                 activeNotificationsCopy.push({
+                    id: rowId,
                     shown: true,
                     variant: "success",
                     message: "Collection " + prevState.collectionToBeDeleted.name + " deleted successfully!"
@@ -55,6 +56,7 @@ class CollectionTable extends React.Component {
             this.setState((state) => {
                 let activeNotificationsCopy = [...state.activeNotifications];
                 activeNotificationsCopy.push({
+                    id: rowId,
                     shown: true,
                     variant: "danger",
                     message: "Oops! An error occurred while deleting the collection " + state.collectionToBeDeleted.name
@@ -291,7 +293,7 @@ class CollectionTable extends React.Component {
                 shown={notification.shown}
                 message={notification.message}
                 variant={notification.variant}
-                key={notification.message}
+                key={notification.id}
                 unmountCallback={() => this.setState((prevState) => {
                     return {activeNotifications: prevState.activeNotifications.filter((notif, idx) => index !== idx)};
                 })}
