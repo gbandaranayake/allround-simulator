@@ -15,14 +15,17 @@ import Tooltip from "react-bootstrap/Tooltip";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import {FaPlusCircle} from "react-icons/fa";
 
+const emptyReq = {
+    method: 'GET',
+    uri: '',
+    headers: []
+};
+
 class Requests extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editingReq: {
-                method: 'GET',
-                uri: '',
-            },
+            editingReq: JSON.parse(JSON.stringify(emptyReq)),
             activeNotifications: []
         }
     }
@@ -49,10 +52,7 @@ class Requests extends React.Component {
             activeNotificationsCopy.push(notification);
             return {
                 activeNotifications: activeNotificationsCopy,
-                editingReq: resetEditingReq ? {
-                    method: 'GET',
-                    uri: '',
-                } : state.editingReq
+                editingReq: resetEditingReq ? JSON.parse(JSON.stringify(emptyReq)) : state.editingReq
             }
         });
     }
@@ -90,6 +90,15 @@ class Requests extends React.Component {
         }
     }
 
+    addHeaderToEditingReq() {
+        this.setState((prevState) => {
+            let copy = JSON.parse(JSON.stringify(prevState.editingReq));
+            let newHeader = {id: copy.headers.length, headerName: '', value: ''};
+            copy.headers.push(newHeader);
+            return {editingReq: copy};
+        })
+    }
+
     render() {
         let notifications = this.state.activeNotifications.map((notification) =>
             <EmbeddedNotification
@@ -102,6 +111,33 @@ class Requests extends React.Component {
                 })}
             />
         );
+
+        let headerElements = this.state.editingReq.headers.map((h) => (
+            <KeyValueInputPair
+                key={h.id}
+                keyLabel="Header name"
+                valueLabel="Header value"
+                keyValue={h.headerName}
+                value={h.value}
+                keyHandler={(d) => {
+                    this.setState((state) => {
+                        let copy = JSON.parse(JSON.stringify(state.editingReq));
+                        copy.headers.find(head => head.id === h.id).keyValue = d;
+                        return {
+                            editingReq: copy
+                        }
+                    })
+                }}
+                valueHandler={(d) => {
+                    this.setState((state) => {
+                        let copy = JSON.parse(JSON.stringify(state.editingReq));
+                        copy.headers.find(head => head.id === h.id).value = d;
+                        return {
+                            editingReq: copy
+                        }
+                    })
+                }}
+            />));
 
         return (
             <div className="mt-4">
@@ -131,9 +167,9 @@ class Requests extends React.Component {
                     </Form.Group>
                     <Form.Group className="col-sm-12" controlId="body">
                         <Form.Label id="body-label">Request body</Form.Label>
-                        <Form.Control as="textarea" rows="6" aria-describedby="body-label" />
+                        <Form.Control as="textarea" rows="6" aria-describedby="body-label"/>
                     </Form.Group>
-                    <KeyValueInputPair keyLabel="Header name" valueLabel="Header value"/>
+                    {headerElements}
                     <div className="text-right mr-2">
                         <OverlayTrigger
                             placement="right"
@@ -149,7 +185,7 @@ class Requests extends React.Component {
                                         color: '#14bd00',
                                         'border': 'none'
                                     }}
-                                    onClick={() => console.log('header added')}><FaPlusCircle/></Button>
+                                    onClick={() => this.addHeaderToEditingReq()}><FaPlusCircle/></Button>
                         </OverlayTrigger>
                     </div>
                     <Button variant="success" type="submit">
