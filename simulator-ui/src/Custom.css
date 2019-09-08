@@ -1,0 +1,4 @@
+label.btn.btn-success.focus.active, label.btn.btn-success.active:focus {
+    outline: none !important;
+    box-shadow: none;
+}
