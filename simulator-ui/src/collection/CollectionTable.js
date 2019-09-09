@@ -121,7 +121,7 @@ class CollectionTable extends React.Component {
                         <Button className="btn" size="sm" onClick={() => this.props.openCollectionCallback(collection)}
                                 style={{
                                     'backgroundColor': 'transparent',
-                                    color: '#AED6F1',
+                                    color: '#14bd00',
                                     'border': 'none'
                                 }}><FaEnvelopeOpen/></Button>
                     </OverlayTrigger>
@@ -137,7 +137,7 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" size="sm"
-                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                style={{'backgroundColor': 'transparent', color: '#14bd00', 'border': 'none'}}
                                 onClick={() => this.props.openCollectionCallback({})}><FaEject/></Button>
                     </OverlayTrigger>}
                     <OverlayTrigger
@@ -150,7 +150,7 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" size="sm"
-                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                style={{'backgroundColor': 'transparent', color: '#14bd00', 'border': 'none'}}
                                 onClick={() => this.displayCollectionSummary(collection)}><FaWpforms/></Button>
                     </OverlayTrigger>
                     <OverlayTrigger
@@ -163,7 +163,7 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" size="sm"
-                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                style={{'backgroundColor': 'transparent', color: '#14bd00', 'border': 'none'}}
                                 onClick={() => this.downloadCollection(collection)}><FaDownload/></Button>
                     </OverlayTrigger>
                     <OverlayTrigger
@@ -176,7 +176,7 @@ class CollectionTable extends React.Component {
                         }
                     >
                         <Button className="btn" size="sm"
-                                style={{'backgroundColor': 'transparent', color: '#AED6F1', 'border': 'none'}}
+                                style={{'backgroundColor': 'transparent', color: '#f10616', 'border': 'none'}}
                                 onClick={() => this.setCollectionToBeDeleted(collection)}><FaTrashAlt/></Button>
                     </OverlayTrigger>
                 </td>

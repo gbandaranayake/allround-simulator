@@ -30,7 +30,7 @@ class Collections extends React.Component {
         this.fetchCollections();
         this.timerId = setInterval(
             () => this.fetchCollections(),
-            60000
+            5000
         );
     }
 
