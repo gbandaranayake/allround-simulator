@@ -88,7 +88,7 @@ class Requests extends React.Component {
                 shown: true,
                 variant: "success",
                 message: "Request " + res.name + " created successfully!"
-            }, true)
+            });
         }
     }
 
@@ -101,20 +101,8 @@ class Requests extends React.Component {
         })
     }
 
-    render() {
-        let notifications = this.state.activeNotifications.map((notification) =>
-            <EmbeddedNotification
-                shown={notification.shown}
-                message={notification.message}
-                variant={notification.variant}
-                key={notification.id}
-                unmountCallback={() => this.setState((prevState) => {
-                    return {activeNotifications: prevState.activeNotifications.filter((notif) => notif.id !== notification.id)};
-                })}
-            />
-        );
-
-        let headerElements = this.state.editingReq.headers.map((h) => (
+    createReqHeaderFields() {
+        return this.state.editingReq.headers.map((h) => (
             <KeyValueInputPair
                 id={h.id}
                 key={h.id}
@@ -150,6 +138,25 @@ class Requests extends React.Component {
                     })
                 }}
             />));
+    }
+
+    createNotifications() {
+        return this.state.activeNotifications.map((notification) =>
+            <EmbeddedNotification
+                shown={notification.shown}
+                message={notification.message}
+                variant={notification.variant}
+                key={notification.id}
+                unmountCallback={() => this.setState((prevState) => {
+                    return {activeNotifications: prevState.activeNotifications.filter((notif) => notif.id !== notification.id)};
+                })}
+            />
+        );
+    }
+
+    render() {
+        let notifications = this.createNotifications();
+        let headerElements = this.createReqHeaderFields();
 
         return (
             <div className="mt-4">
