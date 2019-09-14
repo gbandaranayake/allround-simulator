@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Request from "./Request";
 import URLPaths from "../../common/URLPaths";
-import {get} from "../../common/HttpFetchConnector";
+import {fireDelete, get} from "../../common/HttpFetchConnector";
 import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
@@ -21,6 +21,9 @@ function Requests(props) {
                 let headersIdResolvedRequests = requests.map(r => {
                     r.headers = r.headers.map((h, i) => {
                         h.id = i;
+                        h.headerName = h.first;
+                        h.value = h.second;
+                        delete h.first; delete h.second;
                         return h;
                     });
                     return r;
@@ -34,10 +37,18 @@ function Requests(props) {
         }
     };
 
+    const deleteRequest = (requestId) => {
+        fireDelete(URLPaths.httpRequests.delete + "?requestId=" + requestId).then(res => {
+            setRequests(requests.filter(r => r.id !== requestId));
+        }, error => {
+            console.log("deleting the request failed");
+        });
+    };
+
     if (refreshIntervalId === 0) {
         refreshRequests();
         setRefreshIntervalId(
-            setInterval(() => refreshRequests(), 5000)
+            setInterval(() => refreshRequests(), 20000)
         );
     }
 
@@ -50,7 +61,7 @@ function Requests(props) {
     }, [refreshIntervalId]);
 
     const requestElements = requests.map((req, index) =>
-        <Accordion defaultActiveKey="0" key={index} className="mt-3">
+        <Accordion key={index} className="mt-3">
             <Card>
                 <Card.Header>
                     <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg">
@@ -64,7 +75,7 @@ function Requests(props) {
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" size="lg" onClick={() => console.log('delete req clicked')}
+                        <Button className="btn" size="lg" onClick={() => deleteRequest(req.id)}
                                 variant="outline-danger"
                                 style={{cssFloat: 'right'}}><FaRegTrashAlt/></Button>
                     </OverlayTrigger>

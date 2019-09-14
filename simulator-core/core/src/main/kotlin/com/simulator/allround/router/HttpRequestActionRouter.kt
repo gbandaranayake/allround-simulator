@@ -15,7 +15,7 @@ open class HttpRequestActionRouter(){
                 RouterFunctions.route(RequestPredicates.POST("/create"), HandlerFunction {
                     actionHandler.create(it.bodyToMono())
                 }).andRoute(RequestPredicates.DELETE("/delete"), HandlerFunction {
-                    actionHandler.create(it.bodyToMono())
+                    actionHandler.deleteById(it.queryParam("requestId").orElse(""))
                 }).andRoute(RequestPredicates.GET("/all"), HandlerFunction {
                     actionHandler.fetchAllRequestsForCollection(it.queryParam("collectionId").orElse(""))
                 })
