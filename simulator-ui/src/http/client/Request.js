@@ -15,9 +15,14 @@ import {post} from "../../common/HttpFetchConnector";
 import URLPaths from "../../common/URLPaths";
 import {FaPlusCircle} from "react-icons/fa";
 import '../../Custom.css';
+import Accordion from "react-bootstrap/Accordion";
+import Card from "react-bootstrap/Card";
+import {FaRegTrashAlt, FaRegWindowMaximize} from "react-icons/fa";
+import DialogModal from "../../common/DialogModal";
 
 function Request(props) {
     const [notifications, setNotifications] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [request, setRequest] = useState(props.request || {
         name: '',
         method: 'GET',
@@ -124,79 +129,131 @@ function Request(props) {
     let notificationElements = createNotifications();
     let headerElements = createRequestHeaders();
 
+    const deleteModal = showDeleteModal && (
+        <DialogModal
+            show={true}
+            header="Delete request"
+            body={"Are you sure you want to delete " + request.name + " request?"}
+            onConfirm={() => props.onDelete(request.id)}
+            onExited={() => setShowDeleteModal(false)}
+        />);
+
+
     return (
-        <div className="mt-4">
-            <Form onSubmit={(e) => handleSubmit(e)}>
-                <Form.Group controlId="name">
-                    <InputGroup className="mb-3 col-sm-12">
-                        <InputGroup.Prepend>
-                            <InputGroup.Text id="name-label">Name</InputGroup.Text>
-                        </InputGroup.Prepend>
-                        <FormControl placeholder="Add a name to identify the request." aria-label="Name" aria-describedby="name-label"
-                                     onChange={(e) => updateRequestParam('name', e.target.value)} defaultValue={request.name}/>
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="method">
-                    <InputGroup className="mb-3 col-sm-6">
-                        <ButtonToolbar>
-                            <ToggleButtonGroup type="radio" name="request-method" defaultValue={request.method || 'GET'}
-                                               onChange={(val) => updateRequestParam('method', val)}>
-                                <ToggleButton value={'GET'} variant={'success'}>GET</ToggleButton>
-                                <ToggleButton value={'POST'} variant={'success'}>POST</ToggleButton>
-                                <ToggleButton value={'PUT'} variant={'success'}>PUT</ToggleButton>
-                                <ToggleButton value={'DELETE'} variant={'success'}>DELETE</ToggleButton>
-                                <ToggleButton value={'PATCH'} variant={'success'}>PATCH</ToggleButton>
-                            </ToggleButtonGroup>
-                        </ButtonToolbar>
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group controlId="uri">
-                    <InputGroup className="mb-3 col-sm-12">
-                        <InputGroup.Prepend>
-                            <InputGroup.Text id="uri-label">URI</InputGroup.Text>
-                        </InputGroup.Prepend>
-                        <FormControl placeholder="Paste URI here.." aria-label="URI" aria-describedby="uri-label"
-                                     onChange={(e) => updateRequestParam('uri', e.target.value)} defaultValue={request.uri}/>
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group className="col-sm-12" controlId="body">
-                    <Form.Label id="body-label">Request body</Form.Label>
-                    <Form.Control as="textarea" rows="6" aria-describedby="body-label" defaultValue={request.body}
-                                  onChange={(e) => updateRequestParam('body', e.target.value)}/>
-                </Form.Group>
-                {headerElements}
-                <div className="text-right mr-2">
-                    <OverlayTrigger
-                        placement="right"
-                        overlay={
-                            <Tooltip>
-                                Add HTTP header
-                            </Tooltip>
+        <React.Fragment>
+            {deleteModal}
+            <Accordion defaultActiveKey={props.createNew ? "0" : null} className="mt-3">
+                <Card>
+                    <Card.Header>
+                        <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg">
+                            {props.createNew ? 'Create new HTTP request' : request.name}
+                        </Accordion.Toggle>
+                        {
+                            !props.createNew && <OverlayTrigger
+                                placement="right"
+                                overlay={
+                                    <Tooltip id={`tooltip-open-collection` + request.id}>
+                                        Delete the request
+                                    </Tooltip>
+                                }
+                            >
+                                <Button className="btn" size="lg" onClick={() => setShowDeleteModal(true)}
+                                        variant="outline-danger"
+                                        style={{cssFloat: 'right'}}><FaRegTrashAlt/></Button>
+                            </OverlayTrigger>
                         }
-                    >
-                        <Button className="btn" size="sm"
-                                style={{
-                                    'backgroundColor': 'transparent',
-                                    color: '#14bd00',
-                                    'border': 'none'
-                                }}
-                                onClick={() => addNewHeader()}><FaPlusCircle/></Button>
-                    </OverlayTrigger>
-                </div>
-                <ButtonToolbar>
-                    <Button variant="info" className="mr-2">
-                        Send
-                    </Button>
-                    <Button variant="success" type="submit">
-                        Save
-                    </Button>
-                </ButtonToolbar>
-            </Form>
-            <div className={'mt-3'}>
-                {notificationElements}
-            </div>
-            <DismissibleResponse/>
-        </div>
+                        <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg"
+                                          style={{cssFloat: 'right'}}>
+                            <FaRegWindowMaximize/>
+                        </Accordion.Toggle>
+                    </Card.Header>
+                    <Accordion.Collapse eventKey="0">
+                        <Card.Body>
+                            <div className="mt-4">
+                                <Form onSubmit={(e) => handleSubmit(e)}>
+                                    <Form.Group controlId="name">
+                                        <InputGroup className="mb-3 col-sm-12">
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text id="name-label">Name</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl placeholder="Add a name to identify the request."
+                                                         aria-label="Name" aria-describedby="name-label"
+                                                         onChange={(e) => updateRequestParam('name', e.target.value)}
+                                                         defaultValue={request.name}/>
+                                        </InputGroup>
+                                    </Form.Group>
+                                    <Form.Group controlId="method">
+                                        <InputGroup className="mb-3 col-sm-6">
+                                            <ButtonToolbar>
+                                                <ToggleButtonGroup type="radio" name="request-method"
+                                                                   defaultValue={request.method || 'GET'}
+                                                                   onChange={(val) => updateRequestParam('method', val)}>
+                                                    <ToggleButton value={'GET'} variant={'success'}>GET</ToggleButton>
+                                                    <ToggleButton value={'POST'} variant={'success'}>POST</ToggleButton>
+                                                    <ToggleButton value={'PUT'} variant={'success'}>PUT</ToggleButton>
+                                                    <ToggleButton value={'DELETE'}
+                                                                  variant={'success'}>DELETE</ToggleButton>
+                                                    <ToggleButton value={'PATCH'}
+                                                                  variant={'success'}>PATCH</ToggleButton>
+                                                </ToggleButtonGroup>
+                                            </ButtonToolbar>
+                                        </InputGroup>
+                                    </Form.Group>
+                                    <Form.Group controlId="uri">
+                                        <InputGroup className="mb-3 col-sm-12">
+                                            <InputGroup.Prepend>
+                                                <InputGroup.Text id="uri-label">URI</InputGroup.Text>
+                                            </InputGroup.Prepend>
+                                            <FormControl placeholder="Paste URI here.." aria-label="URI"
+                                                         aria-describedby="uri-label"
+                                                         onChange={(e) => updateRequestParam('uri', e.target.value)}
+                                                         defaultValue={request.uri}/>
+                                        </InputGroup>
+                                    </Form.Group>
+                                    <Form.Group className="col-sm-12" controlId="body">
+                                        <Form.Label id="body-label">Request body</Form.Label>
+                                        <Form.Control as="textarea" rows="6" aria-describedby="body-label"
+                                                      defaultValue={request.body}
+                                                      onChange={(e) => updateRequestParam('body', e.target.value)}/>
+                                    </Form.Group>
+                                    {headerElements}
+                                    <div className="text-right mr-2">
+                                        <OverlayTrigger
+                                            placement="right"
+                                            overlay={
+                                                <Tooltip>
+                                                    Add HTTP header
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <Button className="btn" size="sm"
+                                                    style={{
+                                                        'backgroundColor': 'transparent',
+                                                        color: '#14bd00',
+                                                        'border': 'none'
+                                                    }}
+                                                    onClick={() => addNewHeader()}><FaPlusCircle/></Button>
+                                        </OverlayTrigger>
+                                    </div>
+                                    <ButtonToolbar>
+                                        <Button variant="info" className="mr-2">
+                                            Send
+                                        </Button>
+                                        <Button variant="success" type="submit">
+                                            Save
+                                        </Button>
+                                    </ButtonToolbar>
+                                </Form>
+                                <div className={'mt-3'}>
+                                    {notificationElements}
+                                </div>
+                                <DismissibleResponse/>
+                            </div>
+                        </Card.Body>
+                    </Accordion.Collapse>
+                </Card>
+            </Accordion>
+        </React.Fragment>
     );
 }
 

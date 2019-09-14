@@ -2,13 +2,7 @@ import React, {useEffect, useState} from "react";
 import Request from "./Request";
 import URLPaths from "../../common/URLPaths";
 import {fireDelete, get} from "../../common/HttpFetchConnector";
-import Accordion from "react-bootstrap/Accordion";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import '../../Custom.css';
-import {FaRegTrashAlt, FaRegWindowMaximize} from "react-icons/fa";
-import Tooltip from "react-bootstrap/Tooltip";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 
 function Requests(props) {
     const [requests, setRequests] = useState([]);
@@ -23,7 +17,8 @@ function Requests(props) {
                         h.id = i;
                         h.headerName = h.first;
                         h.value = h.second;
-                        delete h.first; delete h.second;
+                        delete h.first;
+                        delete h.second;
                         return h;
                     });
                     return r;
@@ -60,60 +55,12 @@ function Requests(props) {
         }
     }, [refreshIntervalId]);
 
-    const requestElements = requests.map((req, index) =>
-        <Accordion key={index} className="mt-3">
-            <Card>
-                <Card.Header>
-                    <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg">
-                        {req.name}
-                    </Accordion.Toggle>
-                    <OverlayTrigger
-                        placement="right"
-                        overlay={
-                            <Tooltip id={`tooltip-open-collection` + index}>
-                                Delete the request
-                            </Tooltip>
-                        }
-                    >
-                        <Button className="btn" size="lg" onClick={() => deleteRequest(req.id)}
-                                variant="outline-danger"
-                                style={{cssFloat: 'right'}}><FaRegTrashAlt/></Button>
-                    </OverlayTrigger>
-                    <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg"
-                                      style={{cssFloat: 'right'}}>
-                        <FaRegWindowMaximize/>
-                    </Accordion.Toggle>
-                </Card.Header>
-                <Accordion.Collapse eventKey="0">
-                    <Card.Body>
-                        <Request request={req} collectionId={props.collectionId}/>
-                    </Card.Body>
-                </Accordion.Collapse>
-            </Card>
-        </Accordion>
-    );
-
+    const requestElements = requests.map((req) => <Request request={req} collectionId={props.collectionId} key={req.id}
+                                                                  onDelete={deleteRequest}/>);
 
     return (
         <React.Fragment>
-            <Accordion defaultActiveKey="0">
-                <Card>
-                    <Card.Header>
-                        <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg">
-                            Create new HTTP request
-                        </Accordion.Toggle>
-                        <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg"
-                                          style={{cssFloat: 'right'}}>
-                            <FaRegWindowMaximize/>
-                        </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="0">
-                        <Card.Body>
-                            <Request collectionId={props.collectionId}/>
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>
-            </Accordion>
+            <Request collectionId={props.collectionId} createNew={true}/>
             {requestElements}
         </React.Fragment>
     );
