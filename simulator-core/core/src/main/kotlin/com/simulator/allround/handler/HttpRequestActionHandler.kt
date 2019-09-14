@@ -9,14 +9,21 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
+import java.util.*
 
 @Component
-class HttpRequestActionHandler(@Autowired val collectionRepo: HttpRequestMongoRepository) {
+class HttpRequestActionHandler(@Autowired val httpRequestRepo: HttpRequestMongoRepository) {
 
     fun create(request: Mono<HttpRequest>): Mono<ServerResponse> {
         return request.flatMap {
-            collectionRepo.save(it)
+            httpRequestRepo.save(it)
         }.flatMap {
+            ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromObject(it))
+        }
+    }
+
+    fun fetchAllRequestsForCollection(collectionId: String): Mono<ServerResponse> {
+        return httpRequestRepo.findByCollectionId(collectionId).collectList().flatMap {
             ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromObject(it))
         }
     }
@@ -27,9 +34,9 @@ data class HttpRequest(
         @Id val id: String?,
         val uri: String,
         val method: HttpMethod,
-        val body: String?,
-        val headers:    List<Pair<String, String>>?,
-        val collectionId: String?
+        val body: String="",
+        val headers:    List<Pair<String, String>> = Collections.emptyList(),
+        val collectionId: String = ""
 )
 
 enum class HttpMethod{

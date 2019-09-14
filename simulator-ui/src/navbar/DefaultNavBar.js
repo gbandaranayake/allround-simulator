@@ -19,7 +19,7 @@ class DefaultNavBar extends React.Component {
                 return <Collections openCollectionCallback={(d) => this.setState({openCollection: d})}
                                     openCollection={this.state.openCollection}/>;
             case 'httpClient' :
-                return <HttpClient http={(this.state.openCollection || {}).httpClient} collectionId={(this.state.openCollection || {}).id}/>;
+                return <HttpClient collectionId={(this.state.openCollection || {}).id}/>;
             case 'httpServer' :
                 return <HttpClient/>;
             case 'settings' :

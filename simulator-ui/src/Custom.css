@@ -7,3 +7,19 @@ button.btn.btn-primary.btn-lg {
     outline: none !important;
     box-shadow: none;
 }
+
+button.btn.btn-outline-success.btn-lg, button.btn.btn-outline-success.btn-lg:hover, button.btn.btn-outline-success.btn-lg:active:focus {
+    color: #28a745;
+    background-color: transparent;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none;
+}
+
+button.btn.btn-outline-danger.btn-lg, button.btn.btn-danger.btn-lg:hover, button.btn.btn-danger.btn-lg:active:focus {
+    color: #dc3545;
+    background-color: transparent;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none;
+}

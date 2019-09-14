@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.server.*
 
 
 @Configuration
-open class HttpRequestfActionRouter(){
+open class HttpRequestActionRouter(){
 
     @Bean
     open fun route(actionHandler: HttpRequestActionHandler): RouterFunction<ServerResponse> {
@@ -17,7 +17,7 @@ open class HttpRequestfActionRouter(){
                 }).andRoute(RequestPredicates.DELETE("/delete"), HandlerFunction {
                     actionHandler.create(it.bodyToMono())
                 }).andRoute(RequestPredicates.GET("/all"), HandlerFunction {
-                    actionHandler.create(it.bodyToMono())
+                    actionHandler.fetchAllRequestsForCollection(it.queryParam("collectionId").orElse(""))
                 })
         )
     }

@@ -18,7 +18,12 @@ import '../../Custom.css';
 
 function Request(props) {
     const [notifications, setNotifications] = useState([]);
-    const [request, setRequest] = useState(props.request);
+    const [request, setRequest] = useState(props.request || {
+        name: '',
+        method: 'GET',
+        uri: '',
+        headers: []
+    });
 
     const createNotifications = () => {
         return notifications.map((notification) =>
@@ -43,7 +48,7 @@ function Request(props) {
                 value={h.value}
                 onKeyChange={(d) => {
                     let copy = JSON.parse(JSON.stringify(request));
-                    copy.headers.find(head => head.id === h.id).keyValue = d;
+                    copy.headers.find(head => head.id === h.id).headerName = d;
                     setRequest(copy);
                 }}
                 onValueChange={(d) => {
@@ -69,6 +74,9 @@ function Request(props) {
         e.preventDefault();
         let copy = JSON.parse(JSON.stringify(request));
         copy.collectionId = props.collectionId;
+        copy.headers = copy.headers.map(d => {
+            return {first: d.headerName, second: d.value}
+        });
         post(URLPaths.httpRequests.create, copy)
             .then((res) => {
                 handleSubmitResp(res);
@@ -119,10 +127,19 @@ function Request(props) {
     return (
         <div className="mt-4">
             <Form onSubmit={(e) => handleSubmit(e)}>
+                <Form.Group controlId="name">
+                    <InputGroup className="mb-3 col-sm-12">
+                        <InputGroup.Prepend>
+                            <InputGroup.Text id="name-label">Name</InputGroup.Text>
+                        </InputGroup.Prepend>
+                        <FormControl placeholder="Add a name to identify the request." aria-label="Name" aria-describedby="name-label"
+                                     onChange={(e) => updateRequestParam('name', e.target.value)} defaultValue={request.name}/>
+                    </InputGroup>
+                </Form.Group>
                 <Form.Group controlId="method">
                     <InputGroup className="mb-3 col-sm-6">
                         <ButtonToolbar>
-                            <ToggleButtonGroup type="radio" name="request-method" defaultValue={'GET'}
+                            <ToggleButtonGroup type="radio" name="request-method" defaultValue={request.method || 'GET'}
                                                onChange={(val) => updateRequestParam('method', val)}>
                                 <ToggleButton value={'GET'} variant={'success'}>GET</ToggleButton>
                                 <ToggleButton value={'POST'} variant={'success'}>POST</ToggleButton>
@@ -139,12 +156,13 @@ function Request(props) {
                             <InputGroup.Text id="uri-label">URI</InputGroup.Text>
                         </InputGroup.Prepend>
                         <FormControl placeholder="Paste URI here.." aria-label="URI" aria-describedby="uri-label"
-                                     onChange={(e) => updateRequestParam('uri', e.target.value)}/>
+                                     onChange={(e) => updateRequestParam('uri', e.target.value)} defaultValue={request.uri}/>
                     </InputGroup>
                 </Form.Group>
                 <Form.Group className="col-sm-12" controlId="body">
                     <Form.Label id="body-label">Request body</Form.Label>
-                    <Form.Control as="textarea" rows="6" aria-describedby="body-label"/>
+                    <Form.Control as="textarea" rows="6" aria-describedby="body-label" defaultValue={request.body}
+                                  onChange={(e) => updateRequestParam('body', e.target.value)}/>
                 </Form.Group>
                 {headerElements}
                 <div className="text-right mr-2">
