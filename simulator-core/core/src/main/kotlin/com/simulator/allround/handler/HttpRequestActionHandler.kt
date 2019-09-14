@@ -4,6 +4,7 @@ import com.simulator.allround.repository.HttpRequestMongoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.mongodb.repository.Query
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
@@ -22,8 +23,10 @@ class HttpRequestActionHandler(@Autowired val httpRequestRepo: HttpRequestMongoR
         }
     }
 
+    @Query()
     fun fetchAllRequestsForCollection(collectionId: String): Mono<ServerResponse> {
-        return httpRequestRepo.findByCollectionId(collectionId).collectList().flatMap {
+        val resolvedColId = if(collectionId.isEmpty())  null else collectionId
+        return httpRequestRepo.findByCollectionId(resolvedColId).collectList().flatMap {
             ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromObject(it))
         }
     }

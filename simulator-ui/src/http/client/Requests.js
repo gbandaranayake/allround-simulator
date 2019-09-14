@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Request from "./Request";
 import URLPaths from "../../common/URLPaths";
 import {get} from "../../common/HttpFetchConnector";
@@ -6,10 +6,9 @@ import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import '../../Custom.css';
-import {FaRegWindowMaximize} from "react-icons/fa";
+import {FaRegTrashAlt, FaRegWindowMaximize} from "react-icons/fa";
 import Tooltip from "react-bootstrap/Tooltip";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import {FaRegTrashAlt} from "react-icons/fa";
 
 function Requests(props) {
     const [requests, setRequests] = useState([]);
@@ -17,9 +16,16 @@ function Requests(props) {
 
     const refreshRequests = () => {
         try {
-            let url = URLPaths.httpRequests.fetch + '?collectionId=' + props.collectionId;
+            let url = URLPaths.httpRequests.fetch + '?collectionId=' + (props.collectionId || '');
             get(url).then(requests => {
-                setRequests(requests);
+                let headersIdResolvedRequests = requests.map(r => {
+                    r.headers = r.headers.map((h, i) => {
+                        h.id = i;
+                        return h;
+                    });
+                    return r;
+                });
+                setRequests(headersIdResolvedRequests);
             }, error => {
                 console.log('failed to fetch the requests list ' + this);
             });
@@ -29,6 +35,7 @@ function Requests(props) {
     };
 
     if (refreshIntervalId === 0) {
+        refreshRequests();
         setRefreshIntervalId(
             setInterval(() => refreshRequests(), 5000)
         );
@@ -57,10 +64,12 @@ function Requests(props) {
                             </Tooltip>
                         }
                     >
-                        <Button className="btn" size="lg" onClick={() => console.log('delete req clicked')} variant="outline-danger"
+                        <Button className="btn" size="lg" onClick={() => console.log('delete req clicked')}
+                                variant="outline-danger"
                                 style={{cssFloat: 'right'}}><FaRegTrashAlt/></Button>
                     </OverlayTrigger>
-                    <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg" style={{cssFloat: 'right'}}>
+                    <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg"
+                                      style={{cssFloat: 'right'}}>
                         <FaRegWindowMaximize/>
                     </Accordion.Toggle>
                 </Card.Header>
@@ -82,7 +91,8 @@ function Requests(props) {
                         <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg">
                             Create new HTTP request
                         </Accordion.Toggle>
-                        <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg" style={{cssFloat: 'right'}}>
+                        <Accordion.Toggle as={Button} variant="outline-success" eventKey="0" size="lg"
+                                          style={{cssFloat: 'right'}}>
                             <FaRegWindowMaximize/>
                         </Accordion.Toggle>
                     </Card.Header>
