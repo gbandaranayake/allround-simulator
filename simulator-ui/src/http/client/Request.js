@@ -29,6 +29,8 @@ function Request(props) {
         uri: '',
         headers: []
     });
+    const [response, setResponse] = useState(null);
+    const [showResponse, setShowResponse] = useState(false);
 
     const createNotifications = () => {
         return notifications.map((notification) =>
@@ -79,12 +81,32 @@ function Request(props) {
         e.preventDefault();
         let copy = JSON.parse(JSON.stringify(request));
         copy.collectionId = props.collectionId;
-        copy.headers = copy.headers.map(d => {
-            return {first: d.headerName, second: d.value}
-        });
+        copy.headers = treatHeadersForSend(copy.headers);
         post(URLPaths.httpRequests.save, copy)
             .then((res) => {
                 handleSubmitResp(res);
+            }, (error) => {
+                addToNotifications({
+                    id: Date.now(),
+                    shown: true,
+                    variant: "danger",
+                    message: "Oops! An error occurred while saving the request " + request.name
+                });
+            });
+    };
+
+    function treatHeadersForSend(headers) {
+        headers.map(d => {
+            return {first: d.headerName, second: d.value}
+        });
+    }
+
+    const handleExecute = () => {
+        let copy = JSON.parse(JSON.stringify(request));
+        copy.headers = treatHeadersForSend(copy.headers);
+        post(URLPaths.httpRequests.execute, copy)
+            .then((res) => {
+                handleRequestExecuteResponse(res);
             }, (error) => {
                 addToNotifications({
                     id: Date.now(),
@@ -113,6 +135,20 @@ function Request(props) {
             props.savedRequestCallback && props.savedRequestCallback(res);
         }
     };
+
+    function handleRequestExecuteResponse(res) {
+        if (res.status && res.status !== 200) {
+            addToNotifications({
+                id: Date.now(),
+                shown: true,
+                variant: "danger",
+                message: "Oops! An error occurred while executing the request " + request.name
+            });
+        } else {
+            setResponse(res);
+            setShowResponse(true);
+        }
+    }
 
     const addToNotifications = (notification) => {
         let activeNotificationsCopy = [...notifications];
@@ -237,7 +273,7 @@ function Request(props) {
                                         </OverlayTrigger>
                                     </div>
                                     <ButtonToolbar>
-                                        <Button variant="info" className="mr-2">
+                                        <Button variant="info" className="mr-2" onClick={handleExecute}>
                                             Send
                                         </Button>
                                         <Button variant="success" type="submit">
@@ -248,7 +284,7 @@ function Request(props) {
                                 <div className={'mt-3'}>
                                     {notificationElements}
                                 </div>
-                                <DismissibleResponse/>
+                                {showResponse && <DismissibleResponse response={response} show={showResponse} onClose={() => setShowResponse(false)}/>}
                             </div>
                         </Card.Body>
                     </Accordion.Collapse>

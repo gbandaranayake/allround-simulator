@@ -2,59 +2,60 @@ package com.simulator.allround.http.client
 
 import com.simulator.allround.handler.HttpMethod
 import com.simulator.allround.handler.HttpRequest
-import org.apache.http.HttpResponse
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpRequestBase
-import org.apache.http.concurrent.FutureCallback
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient
-import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy
-import org.apache.http.nio.conn.NoopIOSessionStrategy
-import org.apache.http.nio.conn.SchemeIOSessionStrategy
+import com.simulator.allround.handler.HttpResponse
 import org.apache.http.config.RegistryBuilder
+import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.ssl.SSLContexts
-import org.apache.http.impl.nio.reactor.IOReactorConfig
-import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor
-import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager
-import org.apache.http.impl.nio.client.HttpAsyncClients
 import org.apache.http.message.BasicHeader
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory
+import org.apache.http.conn.socket.PlainConnectionSocketFactory
+import org.apache.http.conn.socket.ConnectionSocketFactory
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
+import org.apache.http.client.methods.*
+import org.apache.http.impl.client.HttpClients
+import org.springframework.stereotype.Component
+import java.io.InputStreamReader
+import javax.annotation.PostConstruct
 
-
+@Component
 class HttpClientConnector {
-    lateinit var client: CloseableHttpAsyncClient;
+    lateinit var client: CloseableHttpClient;
     var connectionTimeout = 30000
     var soTimeout = 30000
     var maxTotalConnections = 100
     var maxConnectionsPerRoute = 10
     private val requestMappers = mapOf(Pair(HttpMethod.GET, this::mapToHttpGet))
 
+    @PostConstruct
     fun init() {
         val sslcontext = SSLContexts.createSystemDefault()
-        val sessionStrategyRegistry = RegistryBuilder.create<SchemeIOSessionStrategy>()
-                .register("http", NoopIOSessionStrategy.INSTANCE)
-                .register("https", SSLIOSessionStrategy(sslcontext))
+        val socketFactoryRegistry = RegistryBuilder.create<ConnectionSocketFactory>()
+                .register("http", PlainConnectionSocketFactory.INSTANCE)
+                .register("https", SSLConnectionSocketFactory(sslcontext))
                 .build()
-        val ioReactorConfig = IOReactorConfig.custom()
-                .setIoThreadCount(Runtime.getRuntime().availableProcessors())
-                .setConnectTimeout(connectionTimeout)
-                .setSoTimeout(soTimeout)
-                .build()
-        val ioReactor = DefaultConnectingIOReactor(ioReactorConfig)
-        val connManager = PoolingNHttpClientConnectionManager(ioReactor, sessionStrategyRegistry)
+        val connManager = PoolingHttpClientConnectionManager(socketFactoryRegistry)
         connManager.maxTotal = maxTotalConnections;
         connManager.defaultMaxPerRoute = maxConnectionsPerRoute
-        client = HttpAsyncClients.custom()
+        client = HttpClients.custom()
                 .setConnectionManager(connManager)
-                .build();
-        client.start()
+                .build()
     }
 
-    fun executeRequest(request: HttpRequest, doneCallback: FutureCallback<HttpResponse>) {
-        if (!client.isRunning) client.start()
-        val requestBase = requestMappers[request.method]?.invoke(request)
-        client.execute(requestBase, doneCallback)
+    fun executeRequest(request: HttpRequest): HttpResponse {
+        val uriRequest = requestMappers[request.method]?.invoke(request)
+        val response = client.execute(uriRequest)
+        val responseEntityReader = InputStreamReader(response.entity.content)
+        responseEntityReader.use { responseEntityReader ->
+            return HttpResponse(
+                    response.statusLine.statusCode,
+                    response.statusLine.reasonPhrase,
+                    response.allHeaders.map { Pair(it.name, it.value) },
+                    responseEntityReader.readText()
+            )
+        }
     }
 
-    private fun mapToHttpGet(request: HttpRequest): HttpRequestBase {
+    private fun mapToHttpGet(request: HttpRequest): HttpUriRequest {
         val get = HttpGet(request.uri)
         val headers = request.headers?.map { BasicHeader(it.first, it.second) }
         get.setHeaders(headers?.toTypedArray())

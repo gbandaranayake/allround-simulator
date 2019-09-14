@@ -13,6 +13,7 @@ function Requests(props) {
             let url = URLPaths.httpRequests.fetch + '?collectionId=' + (props.collectionId || '');
             get(url).then(requests => {
                 let headersIdResolvedRequests = requests.map(r => {
+                    r.headers = r.headers || [];
                     r.headers = r.headers.map((h, i) => {
                         h.id = i;
                         h.headerName = h.first;
@@ -41,16 +42,13 @@ function Requests(props) {
     };
 
     const syncRequestObjectWithState = (req) => {
-        console.log(req);
         let requestsCopy = [...requests];
         let availableReq = requestsCopy.filter(r => r.id === req.id);
-        console.log(availableReq);
         if (availableReq.length > 0) {
             requestsCopy[requestsCopy.indexOf(availableReq[0])] = req;
         } else {
             requestsCopy.push(req);
         }
-        console.log(requestsCopy);
         setRequests(requestsCopy);
     };
 

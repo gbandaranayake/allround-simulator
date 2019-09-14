@@ -18,6 +18,8 @@ open class HttpRequestActionRouter(){
                     actionHandler.deleteById(it.queryParam("requestId").orElse(""))
                 }).andRoute(RequestPredicates.GET("/all"), HandlerFunction {
                     actionHandler.fetchAllRequestsForCollection(it.queryParam("collectionId").orElse(""))
+                }).andRoute(RequestPredicates.POST("/execute"), HandlerFunction {
+                    actionHandler.executeRequest(it.bodyToMono())
                 })
         )
     }

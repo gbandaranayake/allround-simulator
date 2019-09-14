@@ -10,7 +10,8 @@ const URLPaths = {
     httpRequests : {
         fetch: base + 'http/requests/all',
         save: base + 'http/requests/save',
-        delete: base + 'http/requests/delete'
+        delete: base + 'http/requests/delete',
+        execute: base + 'http/requests/execute'
     }
 };
 

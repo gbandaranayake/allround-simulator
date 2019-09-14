@@ -1,5 +1,6 @@
 package com.simulator.allround.handler
 
+import com.simulator.allround.http.client.HttpClientConnector
 import com.simulator.allround.repository.HttpRequestMongoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.annotation.Id
@@ -11,7 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 
 @Component
-class HttpRequestActionHandler(@Autowired val httpRequestRepo: HttpRequestMongoRepository) {
+class HttpRequestActionHandler(@Autowired val httpRequestRepo: HttpRequestMongoRepository, @Autowired val httpClient: HttpClientConnector) {
 
     fun save(request: Mono<HttpRequest>): Mono<ServerResponse> {
         return request.flatMap {
@@ -33,6 +34,13 @@ class HttpRequestActionHandler(@Autowired val httpRequestRepo: HttpRequestMongoR
             ServerResponse.ok().build()
         }
     }
+
+    fun executeRequest(request: Mono<HttpRequest>): Mono<ServerResponse> {
+        return request.map { httpClient.executeRequest(it) }
+                .flatMap {
+                    ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromObject(it))
+                }
+    }
 }
 
 @Document("http-requests")
@@ -44,6 +52,13 @@ data class HttpRequest(
         val body: String?,
         val headers: List<Pair<String, String>>?,
         val collectionId: String?
+)
+
+data class HttpResponse(
+        val status: Int,
+        val reason: String,
+        val headers: List<Pair<String, String>>?,
+        val body: String
 )
 
 enum class HttpMethod {
