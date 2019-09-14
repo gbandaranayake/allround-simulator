@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 @Component
 class HttpRequestActionHandler(@Autowired val httpRequestRepo: HttpRequestMongoRepository) {
 
-    fun create(request: Mono<HttpRequest>): Mono<ServerResponse> {
+    fun save(request: Mono<HttpRequest>): Mono<ServerResponse> {
         return request.flatMap {
             httpRequestRepo.save(it)
         }.flatMap {

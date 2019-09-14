@@ -12,8 +12,8 @@ open class HttpRequestActionRouter(){
     @Bean
     open fun route(actionHandler: HttpRequestActionHandler): RouterFunction<ServerResponse> {
         return RouterFunctions.nest(RequestPredicates.path("/http/requests"),
-                RouterFunctions.route(RequestPredicates.POST("/create"), HandlerFunction {
-                    actionHandler.create(it.bodyToMono())
+                RouterFunctions.route(RequestPredicates.POST("/save"), HandlerFunction {
+                    actionHandler.save(it.bodyToMono())
                 }).andRoute(RequestPredicates.DELETE("/delete"), HandlerFunction {
                     actionHandler.deleteById(it.queryParam("requestId").orElse(""))
                 }).andRoute(RequestPredicates.GET("/all"), HandlerFunction {

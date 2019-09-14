@@ -40,6 +40,20 @@ function Requests(props) {
         });
     };
 
+    const syncRequestObjectWithState = (req) => {
+        console.log(req);
+        let requestsCopy = [...requests];
+        let availableReq = requestsCopy.filter(r => r.id === req.id);
+        console.log(availableReq);
+        if (availableReq.length > 0) {
+            requestsCopy[requestsCopy.indexOf(availableReq[0])] = req;
+        } else {
+            requestsCopy.push(req);
+        }
+        console.log(requestsCopy);
+        setRequests(requestsCopy);
+    };
+
     if (refreshIntervalId === 0) {
         refreshRequests();
         setRefreshIntervalId(
@@ -57,11 +71,12 @@ function Requests(props) {
 
     const requestElements = requests.map((req) => <Request request={req} collectionId={props.collectionId} key={req.id}
                                                            onDelete={deleteRequest}
-                                                           deleteModalAnimationEnd={(requestId) => setRequests(requests.filter(r => r.id !== requestId))}/>);
+                                                           deleteModalAnimationEnd={(requestId) => setRequests(requests.filter(r => r.id !== requestId))}
+                                                           savedRequestCallback={(syncRequestObjectWithState)}/>);
 
     return (
         <React.Fragment>
-            <Request collectionId={props.collectionId} createNew={true}/>
+            <Request collectionId={props.collectionId} createNew={true} savedRequestCallback={(syncRequestObjectWithState)}/>
             {requestElements}
         </React.Fragment>
     );

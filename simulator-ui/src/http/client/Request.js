@@ -82,7 +82,7 @@ function Request(props) {
         copy.headers = copy.headers.map(d => {
             return {first: d.headerName, second: d.value}
         });
-        post(URLPaths.httpRequests.create, copy)
+        post(URLPaths.httpRequests.save, copy)
             .then((res) => {
                 handleSubmitResp(res);
             }, (error) => {
@@ -90,7 +90,7 @@ function Request(props) {
                     id: Date.now(),
                     shown: true,
                     variant: "danger",
-                    message: "Oops! An error occurred while creating the request " + request.name
+                    message: "Oops! An error occurred while saving the request " + request.name
                 });
             });
     };
@@ -101,15 +101,16 @@ function Request(props) {
                 id: Date.now(),
                 shown: true,
                 variant: "danger",
-                message: "Oops! An error occurred while creating the request " + request.name
+                message: "Oops! An error occurred while saving the request " + request.name
             });
         } else {
             addToNotifications({
                 id: res.id,
                 shown: true,
                 variant: "success",
-                message: "Request " + res.name + " created successfully!"
+                message: "Request " + res.name + " saved successfully!"
             });
+            props.savedRequestCallback && props.savedRequestCallback(res);
         }
     };
 
