@@ -1,6 +1,5 @@
 package com.simulator.allround.collection
 
-import com.simulator.allround.handler.HttpRequest
 import com.simulator.allround.repository.CollectionMongoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.annotation.Id
@@ -38,4 +37,4 @@ class CollectionActionHandler(@Autowired private val collectionRepository: Colle
 }
 
 @Document("collection-docs")
-data class Collection(@Id val id: String?, val name: String?, val description: String?, var httpRequests: List<HttpRequest>?)
+data class Collection(@Id val id: String?, val name: String?, val description: String?)
