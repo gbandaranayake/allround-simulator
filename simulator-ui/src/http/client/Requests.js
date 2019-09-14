@@ -34,7 +34,7 @@ function Requests(props) {
 
     const deleteRequest = (requestId) => {
         fireDelete(URLPaths.httpRequests.delete + "?requestId=" + requestId).then(res => {
-            setRequests(requests.filter(r => r.id !== requestId));
+            console.log("Received delete request response " + res);
         }, error => {
             console.log("deleting the request failed");
         });
@@ -56,7 +56,8 @@ function Requests(props) {
     }, [refreshIntervalId]);
 
     const requestElements = requests.map((req) => <Request request={req} collectionId={props.collectionId} key={req.id}
-                                                                  onDelete={deleteRequest}/>);
+                                                           onDelete={deleteRequest}
+                                                           deleteModalAnimationEnd={(requestId) => setRequests(requests.filter(r => r.id !== requestId))}/>);
 
     return (
         <React.Fragment>

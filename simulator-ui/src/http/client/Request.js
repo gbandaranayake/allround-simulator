@@ -135,7 +135,7 @@ function Request(props) {
             header="Delete request"
             body={"Are you sure you want to delete " + request.name + " request?"}
             onConfirm={() => props.onDelete(request.id)}
-            onExited={() => setShowDeleteModal(false)}
+            onExited={() => props.deleteModalAnimationEnd(request.id)}
         />);
 
 
